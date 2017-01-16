@@ -57,285 +57,222 @@ import javax.swing.KeyStroke;
 /**
  * @author Derry Bryson
  *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ *         To change the template for this generated type comment go to
+ *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class BasicDialog extends JDialog 
-{
-  /**
-   * @throws java.awt.HeadlessException
-   */
-  public BasicDialog() throws HeadlessException 
-  {
-    super();
-    init();
-  }
-
-  /**
-   * @param arg0
-   * @throws java.awt.HeadlessException
-   */
-  public BasicDialog(Frame arg0) throws HeadlessException 
-  {
-    super(arg0);
+public class BasicDialog extends JDialog {
+	/**
+	 * @throws java.awt.HeadlessException
+	 */
+	public BasicDialog() throws HeadlessException {
+		super();
 		init();
-  }
+	}
 
-  /**
-   * @param arg0
-   * @param arg1
-   * @throws java.awt.HeadlessException
-   */
-  public BasicDialog(Frame arg0, boolean arg1) throws HeadlessException 
-  {
-    super(arg0, arg1);
+	/**
+	 * @param arg0
+	 * @throws java.awt.HeadlessException
+	 */
+	public BasicDialog(Frame arg0) throws HeadlessException {
+		super(arg0);
 		init();
-  }
+	}
 
-  /**
-   * @param arg0
-   * @param arg1
-   * @throws java.awt.HeadlessException
-   */
-  public BasicDialog(Frame arg0, String arg1) throws HeadlessException 
-  {
-    super(arg0, arg1);
+	/**
+	 * @param arg0
+	 * @param arg1
+	 * @throws java.awt.HeadlessException
+	 */
+	public BasicDialog(Frame arg0, boolean arg1) throws HeadlessException {
+		super(arg0, arg1);
 		init();
-  }
+	}
 
-  /**
-   * @param arg0
-   * @param arg1
-   * @param arg2
-   * @throws java.awt.HeadlessException
-   */
-  public BasicDialog(Frame arg0, String arg1, boolean arg2) throws HeadlessException 
-  {
-    super(arg0, arg1, arg2);
+	/**
+	 * @param arg0
+	 * @param arg1
+	 * @throws java.awt.HeadlessException
+	 */
+	public BasicDialog(Frame arg0, String arg1) throws HeadlessException {
+		super(arg0, arg1);
 		init();
-  }
+	}
 
-  /**
-   * @param arg0
-   * @param arg1
-   * @param arg2
-   * @param arg3
-   */
-  public BasicDialog(
-    Frame arg0,
-    String arg1,
-    boolean arg2,
-    GraphicsConfiguration arg3) 
-  {
-    super(arg0, arg1, arg2, arg3);
+	/**
+	 * @param arg0
+	 * @param arg1
+	 * @param arg2
+	 * @throws java.awt.HeadlessException
+	 */
+	public BasicDialog(Frame arg0, String arg1, boolean arg2) throws HeadlessException {
+		super(arg0, arg1, arg2);
 		init();
-  }
+	}
 
-  /**
-   * @param arg0
-   * @throws java.awt.HeadlessException
-   */
-  public BasicDialog(Dialog arg0) throws HeadlessException 
-  {
-    super(arg0);
+	/**
+	 * @param arg0
+	 * @param arg1
+	 * @param arg2
+	 * @param arg3
+	 */
+	public BasicDialog(Frame arg0, String arg1, boolean arg2, GraphicsConfiguration arg3) {
+		super(arg0, arg1, arg2, arg3);
 		init();
-  }
+	}
 
-  /**
-   * @param arg0
-   * @param arg1
-   * @throws java.awt.HeadlessException
-   */
-  public BasicDialog(Dialog arg0, boolean arg1) throws HeadlessException 
-  {
-    super(arg0, arg1);
+	/**
+	 * @param arg0
+	 * @throws java.awt.HeadlessException
+	 */
+	public BasicDialog(Dialog arg0) throws HeadlessException {
+		super(arg0);
 		init();
-  }
+	}
 
-  /**
-   * @param arg0
-   * @param arg1
-   * @throws java.awt.HeadlessException
-   */
-  public BasicDialog(Dialog arg0, String arg1) throws HeadlessException 
-  {
-    super(arg0, arg1);
+	/**
+	 * @param arg0
+	 * @param arg1
+	 * @throws java.awt.HeadlessException
+	 */
+	public BasicDialog(Dialog arg0, boolean arg1) throws HeadlessException {
+		super(arg0, arg1);
 		init();
-  }
+	}
 
-  /**
-   * @param arg0
-   * @param arg1
-   * @param arg2
-   * @throws java.awt.HeadlessException
-   */
-  public BasicDialog(Dialog arg0, String arg1, boolean arg2)
-    throws HeadlessException 
-  {
-    super(arg0, arg1, arg2);
+	/**
+	 * @param arg0
+	 * @param arg1
+	 * @throws java.awt.HeadlessException
+	 */
+	public BasicDialog(Dialog arg0, String arg1) throws HeadlessException {
+		super(arg0, arg1);
 		init();
-  }
+	}
 
-  /**
-   * @param arg0
-   * @param arg1
-   * @param arg2
-   * @param arg3
-   * @throws java.awt.HeadlessException
-   */
-  public BasicDialog(
-    Dialog arg0,
-    String arg1,
-    boolean arg2,
-    GraphicsConfiguration arg3)
-    throws HeadlessException 
-  {
-    super(arg0, arg1, arg2, arg3);
+	/**
+	 * @param arg0
+	 * @param arg1
+	 * @param arg2
+	 * @throws java.awt.HeadlessException
+	 */
+	public BasicDialog(Dialog arg0, String arg1, boolean arg2) throws HeadlessException {
+		super(arg0, arg1, arg2);
 		init();
-  }
+	}
 
-  private void init()
-  {
-  	//
-  	// setup to close on ESCAPE
-  	//
-		getRootPane().registerKeyboardAction(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent actionEvent) 
-			{
+	/**
+	 * @param arg0
+	 * @param arg1
+	 * @param arg2
+	 * @param arg3
+	 * @throws java.awt.HeadlessException
+	 */
+	public BasicDialog(Dialog arg0, String arg1, boolean arg2, GraphicsConfiguration arg3) throws HeadlessException {
+		super(arg0, arg1, arg2, arg3);
+		init();
+	}
+
+	private void init() {
+		//
+		// setup to close on ESCAPE
+		//
+		getRootPane().registerKeyboardAction(new ActionListener() {
+			public void actionPerformed(ActionEvent actionEvent) {
 				dispose();
 			}
 		}, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
-		
-		addWindowListener(new java.awt.event.WindowAdapter()
-		{
-			public void windowClosed(java.awt.event.WindowEvent evt)
-			{
+
+		addWindowListener(new java.awt.event.WindowAdapter() {
+			public void windowClosed(java.awt.event.WindowEvent evt) {
 				saveSizeAndPosition();
 			}
 		});
-  }
-  
-	private static final String
-		PREF_X = "X",
-		PREF_Y = "Y",
-		PREF_WIDTH = "Width",
-		PREF_HEIGHT = "Height",
-		PREF_EXTENDEDSTATE = "ExtendedState";
-	  
-	public void restoreSizeAndPosition() 
-	{
+	}
+
+	private static final String PREF_X = "X", PREF_Y = "Y", PREF_WIDTH = "Width", PREF_HEIGHT = "Height",
+			PREF_EXTENDEDSTATE = "ExtendedState";
+
+	public void restoreSizeAndPosition() {
 		restoreSize();
 		restorePosition();
 	}
 
-	public void restorePosition() 
-	{
-		Preferences
-			pref = Preferences.userNodeForPackage(this.getClass());
+	public void restorePosition() {
+		Preferences pref = Preferences.userNodeForPackage(this.getClass());
 
-		int
-			x = getX(),
-			y = getY();
-			
-		String
-			className = this.getClass().getName();
-  	  
+		int x = getX(), y = getY();
+
+		String className = this.getClass().getName();
+
 		x = pref.getInt(className + "_" + PREF_X, x);
 		y = pref.getInt(className + "_" + PREF_Y, y);
-		
+
 		setLocation(x, y);
 	}
 
-	public void restoreSize() 
-	{
-		Preferences
-			pref = Preferences.userNodeForPackage(this.getClass());
+	public void restoreSize() {
+		Preferences pref = Preferences.userNodeForPackage(this.getClass());
 
-		int
-			w = getWidth(),
-			h = getHeight();
-			
-		String
-			className = this.getClass().getName();
-  	  
+		int w = getWidth(), h = getHeight();
+
+		String className = this.getClass().getName();
+
 		w = pref.getInt(className + "_" + PREF_WIDTH, w);
 		h = pref.getInt(className + "_" + PREF_HEIGHT, h);
-		
+
 		setSize(w, h);
 	}
 
-	public void saveSizeAndPosition() 
-	{
+	public void saveSizeAndPosition() {
 		savePosition();
 		saveSize();
 	}
-	
-	public void savePosition() 
-	{
-		Preferences
-			pref = Preferences.userNodeForPackage(this.getClass());
 
-		String
-			className = this.getClass().getName();
-  	  
+	public void savePosition() {
+		Preferences pref = Preferences.userNodeForPackage(this.getClass());
+
+		String className = this.getClass().getName();
+
 		pref.putInt(className + "_" + PREF_X, getX());
 		pref.putInt(className + "_" + PREF_Y, getY());
 	}
-	
-	public void saveSize() 
-	{
-		Preferences
-			pref = Preferences.userNodeForPackage(this.getClass());
 
-		String
-			className = this.getClass().getName();
-  	  
+	public void saveSize() {
+		Preferences pref = Preferences.userNodeForPackage(this.getClass());
+
+		String className = this.getClass().getName();
+
 		pref.putInt(className + "_" + PREF_WIDTH, getWidth());
 		pref.putInt(className + "_" + PREF_HEIGHT, getHeight());
 	}
-	
-	public void center()
-	{
-		Dimension
-		  screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-		  
-		int
-		  x,
-		  y,
-		  w = getWidth(),
-		  h = getHeight();
-		  
+
+	public void center() {
+		Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+
+		int x, y, w = getWidth(), h = getHeight();
+
 		x = (screenSize.width - getWidth()) / 2;
-		if(x < 0)
-		  x = 0;
+		if (x < 0)
+			x = 0;
 		y = (screenSize.height - getHeight()) / 2;
-		if(y < 0)
+		if (y < 0)
 			y = 0;
-			
-	  setLocation(x, y);
+
+		setLocation(x, y);
 	}
-	
-	public void centerOnParent()
-	{
-		int
-		  x,
-		  y,
-		  w = getWidth(),
-		  h = getHeight(),
-		  px = getParent().getX(),
-		  py = getParent().getY(),
-		  pw = getParent().getWidth(),
-		  ph = getParent().getHeight();
-		
+
+	public void centerOnParent() {
+		int x, y, w = getWidth(), h = getHeight(), px = getParent().getX(), py = getParent().getY(),
+				pw = getParent().getWidth(), ph = getParent().getHeight();
+
 		x = (px + (pw / 2)) - (w / 2);
 		y = (py + (ph / 2)) - (h / 2);
-		
-		if(x < 0)
-		  x = 0;
-		if(y < 0)
-		  y = 0;
-		  
-		setLocation(x, y);  
+
+		if (x < 0)
+			x = 0;
+		if (y < 0)
+			y = 0;
+
+		setLocation(x, y);
 	}
 }

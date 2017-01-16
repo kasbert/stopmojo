@@ -56,109 +56,68 @@ import javax.swing.UIManager;
 /**
  * @author derry
  *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ *         To change the template for this generated type comment go to
+ *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class Capture 
-{
-  public static final String
-	  s_appName = "StopMojo Capture",
-		s_appVersion = "0.2",
-		s_propFile = "capture.properties",
-		PREF_LASTPRJFOLDER = "LastPrjFolder",
-		PREF_LASTEXPORTFOLDER = "LastExportFolder";
-  
-  public static Image
-	  s_stopmojoImage;
-  
-	public static ImageIcon
-	  s_helpIcon,
-		s_aboutIcon,
-		s_okIcon,
-		s_cancelIcon,
-		s_prefIcon,
-		s_exitIcon,
-		s_newIcon,
-		s_openIcon,
-		s_saveIcon,
-  	s_bigNewIcon,
-	  s_bigOpenIcon,
-	  s_bigSaveIcon,
-		s_bigGridIcon,
-		s_playIcon,
-		s_stopIcon,
-		s_pauseIcon,
-		s_rewindIcon,
-		s_fastForwardIcon,
-		s_beginIcon,
-		s_endIcon,
-		s_closeIcon,
-		s_bigCloseIcon;
-	
-	private static Properties
-	  s_prop;
-	
-	private static String
-	  s_captureDevName = "";
-	
-	private static int
-	  s_captureFormatIndex = -1;
-	
-	private static Preferences
-	  s_pref;
-  
-	public static String getCaptureDevName()
-	{
+public class Capture {
+	public static final String s_appName = "StopMojo Capture", s_appVersion = "0.2", s_propFile = "capture.properties",
+			PREF_LASTPRJFOLDER = "LastPrjFolder", PREF_LASTEXPORTFOLDER = "LastExportFolder";
+
+	public static Image s_stopmojoImage;
+
+	public static ImageIcon s_helpIcon, s_aboutIcon, s_okIcon, s_cancelIcon, s_prefIcon, s_exitIcon, s_newIcon,
+			s_openIcon, s_saveIcon, s_bigNewIcon, s_bigOpenIcon, s_bigSaveIcon, s_bigGridIcon, s_playIcon, s_stopIcon,
+			s_pauseIcon, s_rewindIcon, s_fastForwardIcon, s_beginIcon, s_endIcon, s_closeIcon, s_bigCloseIcon;
+
+	private static Properties s_prop;
+
+	private static String s_captureDevName = "";
+
+	private static int s_captureFormatIndex = -1;
+
+	private static Preferences s_pref;
+
+	public static String getCaptureDevName() {
 		return s_captureDevName;
 	}
-	
-	public static void setCaptureDevName(String name)
-	{
+
+	public static void setCaptureDevName(String name) {
 		s_captureDevName = name;
 	}
-	
-	public static int getCaptureFormatIndex()
-	{
+
+	public static int getCaptureFormatIndex() {
 		return s_captureFormatIndex;
 	}
-	
-	public static void setCaptureFormatIndex(int format)
-	{
+
+	public static void setCaptureFormatIndex(int format) {
 		s_captureFormatIndex = format;
 	}
-	
-	public static Preferences getPref()
-	{
+
+	public static Preferences getPref() {
 		return s_pref;
 	}
-	
-	public static void main(String[] args) 
-	{
-	  s_pref = Preferences.userNodeForPackage(Capture.class);
+
+	public static void main(String[] args) {
+		s_pref = Preferences.userNodeForPackage(Capture.class);
 		s_prop = new Properties();
-	   
-		try
-		{
+
+		try {
 			FileInputStream in = new FileInputStream(s_propFile);
 			s_prop.load(in);
-			in.close();		
+			in.close();
+		} catch (Exception e) {
+			// System.out.println("Unable to read properties from " +
+			// s_propFile);
+			// System.exit(1);
 		}
-		catch (Exception e)
-		{
-//				System.out.println("Unable to read properties from " + s_propFile);
-//				System.exit(1);
+
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e) {
 		}
-			
-		try 
-		{
-      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-    } 
-		catch (Exception e) 
-		{ 
-		}
-  
-    s_stopmojoImage = new ImageIcon(Capture.class.getResource("/images/stopmojo.gif")).getImage();
-    s_helpIcon = new ImageIcon(Capture.class.getResource("/images/Help16.gif"));
+
+		s_stopmojoImage = new ImageIcon(Capture.class.getResource("/images/stopmojo.gif")).getImage();
+		s_helpIcon = new ImageIcon(Capture.class.getResource("/images/Help16.gif"));
 		s_aboutIcon = new ImageIcon(Capture.class.getResource("/images/About16.gif"));
 		s_prefIcon = new ImageIcon(Capture.class.getResource("/images/Options16.gif"));
 		s_okIcon = new ImageIcon(Capture.class.getResource("/images/Check16.gif"));
@@ -180,104 +139,91 @@ public class Capture
 		s_endIcon = new ImageIcon(Capture.class.getResource("/images/VCREnd.gif"));
 		s_closeIcon = new ImageIcon(Capture.class.getResource("/images/DeleteDocument16.gif"));
 		s_bigCloseIcon = new ImageIcon(Capture.class.getResource("/images/DeleteDocument20.gif"));
-		
+
 		Manager.setHint(Manager.LIGHTWEIGHT_RENDERER, new Boolean(true));
-		
-		String
-		  prjFileName = null;
-		
-		if(args.length > 0)
+
+		String prjFileName = null;
+
+		if (args.length > 0)
 			prjFileName = args[0];
-		
-		CaptureFrame
-		  f = new CaptureFrame(prjFileName);
-		
+
+		CaptureFrame f = new CaptureFrame(prjFileName);
+
 		f.show();
 	}
-	
-	public static Properties getProp()
-	{
+
+	public static Properties getProp() {
 		return s_prop;
 	}
-	
-	public static void onAbout(Frame parent)
-	{
-		JOptionPane.showMessageDialog(parent, 
-			Capture.s_appName + "\n" + "Version " + Capture.s_appVersion + 
-			"\n\nCopyright (c) 2005 Derone Bryson.  All Rights Reserved." , 
-			"About " + Capture.s_appName, JOptionPane.INFORMATION_MESSAGE); 
+
+	public static void onAbout(Frame parent) {
+		JOptionPane.showMessageDialog(parent,
+				Capture.s_appName + "\n" + "Version " + Capture.s_appVersion
+						+ "\n\nCopyright (c) 2005 Derone Bryson.  All Rights Reserved.",
+				"About " + Capture.s_appName, JOptionPane.INFORMATION_MESSAGE);
 	}
-	
-  public static void exit(int exitVal)
-  {
-  	System.exit(exitVal);
-  }
-  
-	public static void handleError(Component parent, String message, String title, Exception e, boolean fatal)
-	{ 
-		if(message == null)
-		  message = "";
-		  
-//		message += "\nPlease try the operation again and notify your system\n" +
-//						"administrator if the problem persists.\n";
-		         
-		if(fatal)
+
+	public static void exit(int exitVal) {
+		System.exit(exitVal);
+	}
+
+	public static void handleError(Component parent, String message, String title, Exception e, boolean fatal) {
+		if (message == null)
+			message = "";
+
+		// message += "\nPlease try the operation again and notify your
+		// system\n" +
+		// "administrator if the problem persists.\n";
+
+		if (fatal)
 			message += "\nThe program will exit.\n";
-  	   
+
 		Toolkit.getDefaultToolkit().beep();
-		JOptionPane.showMessageDialog(parent, message, s_appName + ": " + title, JOptionPane.ERROR_MESSAGE); 
-												
-		if(fatal)
-		{
+		JOptionPane.showMessageDialog(parent, message, s_appName + ": " + title, JOptionPane.ERROR_MESSAGE);
+
+		if (fatal) {
 			e.printStackTrace();
 			exit(1);
 		}
 	}
-	
-	public static void errorMsg(Component parent, String message, String title)
-	{ 
-		JOptionPane.showMessageDialog(parent, message, s_appName + ": " + title, JOptionPane.ERROR_MESSAGE); 
+
+	public static void errorMsg(Component parent, String message, String title) {
+		JOptionPane.showMessageDialog(parent, message, s_appName + ": " + title, JOptionPane.ERROR_MESSAGE);
 	}
-	
-	public static void databaseError(Component parent, Exception e, boolean fatal)
-	{
-		String
-		  mess = e.getMessage();
-		  
-		if(mess != null && mess.indexOf('\n') != -1)
-		  mess = mess.substring(0, mess.indexOf('\n'));
-		
-		if(mess != null && mess.length() > 1000)
-		  mess = mess.substring(0, 1000);
-		  
-   	handleError(parent, mess, "Database Error", e, fatal); 
-	}
-	
-	public static void generalError(Component parent, Exception e, boolean fatal)
-	{
-		String
-			mess = e.getMessage();
-		  
-		if(mess != null && mess.indexOf('\n') != -1)
+
+	public static void databaseError(Component parent, Exception e, boolean fatal) {
+		String mess = e.getMessage();
+
+		if (mess != null && mess.indexOf('\n') != -1)
 			mess = mess.substring(0, mess.indexOf('\n'));
-		
-		if(mess != null && mess.length() > 1000)
+
+		if (mess != null && mess.length() > 1000)
 			mess = mess.substring(0, 1000);
-		  
-		handleError(parent, mess, "General Error", e, fatal); 
+
+		handleError(parent, mess, "Database Error", e, fatal);
 	}
-	
-	public static void generalError(Component parent, String title, Exception e, boolean fatal)
-	{
-		String
-			mess = e.getMessage();
-		  
-		if(mess != null && mess.indexOf('\n') != -1)
+
+	public static void generalError(Component parent, Exception e, boolean fatal) {
+		String mess = e.getMessage();
+
+		if (mess != null && mess.indexOf('\n') != -1)
 			mess = mess.substring(0, mess.indexOf('\n'));
-		
-		if(mess != null && mess.length() > 1000)
+
+		if (mess != null && mess.length() > 1000)
 			mess = mess.substring(0, 1000);
-		  
-		handleError(parent, mess, title, e, fatal); 
+
+		handleError(parent, mess, "General Error", e, fatal);
+	}
+
+	public static void generalError(Component parent, String title, Exception e, boolean fatal) {
+		String mess = e.getMessage();
+
+		if (mess != null && mess.indexOf('\n') != -1)
+			mess = mess.substring(0, mess.indexOf('\n'));
+
+		if (mess != null && mess.length() > 1000)
+			mess = mess.substring(0, 1000);
+
+		handleError(parent, mess, title, e, fatal);
 	}
 }

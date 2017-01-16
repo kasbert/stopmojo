@@ -54,125 +54,104 @@ import javax.media.format.VideoFormat;
 import javax.media.protocol.ContentDescriptor;
 import javax.media.protocol.PullBufferStream;
 
-
 /**
  * @author derry
  *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ *         To change the template for this generated type comment go to
+ *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class ImageSourceStream implements PullBufferStream 
-{
- 	private Vector 
-	  m_images;
- 	
-  private int 
-		m_curFrame,
-	  m_nextImage = 0;	// index of the next image to be read.
-  
-  private VideoFormat 
-	  m_format;
+public class ImageSourceStream implements PullBufferStream {
+	private Vector m_images;
 
-  private boolean 
-	  m_ended = false;
-  
-  private ImageFrameSource
-	  m_source;
-  
-  private static final boolean
-	  s_intArray = true;
-  
-  private int
-	  m_data[];
-  
-  private float
-	  m_frameRate;
-  
-  private long
-	  m_frameDuration;
+	private int m_curFrame, m_nextImage = 0; // index of the next image to be
+												// read.
 
-  public ImageSourceStream(float frameRate, ImageFrameSource source)               
-  {
-  	m_source = source;
-  	m_curFrame = 0;
-  	m_frameRate = frameRate;
-  	BufferedImage img = source.getImage(0);
-   	m_format = new RGBFormat(new Dimension(img.getWidth(), img.getHeight()), img.getWidth() * img.getHeight(), Format.intArray, frameRate, 24, 0x00ff0000, 0x0000ff00, 0x000000ff, 1, img.getWidth(), Format.FALSE, Format.NOT_SPECIFIED);
-   	m_data = new int[img.getWidth() * img.getHeight()];
-   	m_frameDuration = (long)(((long)source.getCount() * 1000000) / (long)frameRate);
-  }
+	private VideoFormat m_format;
 
-  public boolean willReadBlock() 
-  {
-    return false;
-  }
+	private boolean m_ended = false;
 
- 	public void read(Buffer buf) throws IOException 
-	{
- 		if(m_curFrame < 0 || m_curFrame >= m_source.getCount())
- 		{
-//  		System.err.println("Done reading all images.");
-  		buf.setEOM(true);
-  		buf.setOffset(0);
-  		buf.setLength(0);
-  		m_curFrame = 0;
-//  		m_ended = true;
-  		return;
-  	}
+	private ImageFrameSource m_source;
 
- 		buf.setSequenceNumber(m_curFrame);
- 		buf.setTimeStamp(m_curFrame * m_frameDuration);
- 		buf.setDuration(m_frameDuration);
- 		BufferedImage img = m_source.getImage(m_curFrame++);
- 		buf.setData(img.getRGB(0, 0, img.getWidth(), img.getHeight(), m_data, 0, img.getWidth()));
- 		buf.setLength(m_data.length);
- 		buf.setOffset(0);
- 		buf.setFlags(buf.getFlags() | Buffer.FLAG_KEY_FRAME);
- 		buf.setFormat(m_format);
- 	}
+	private static final boolean s_intArray = true;
 
- 	public Format getFormat() 
- 	{
-    return m_format;
- 	}
+	private int m_data[];
 
-  public ContentDescriptor getContentDescriptor() 
-  {
-    return new ContentDescriptor(ContentDescriptor.RAW);
-  }
+	private float m_frameRate;
 
-  public long getContentLength() 
-  {
-    return 0;
- 	}
+	private long m_frameDuration;
 
- 	public boolean endOfStream() 
- 	{
-    return m_ended;
-  }
+	public ImageSourceStream(float frameRate, ImageFrameSource source) {
+		m_source = source;
+		m_curFrame = 0;
+		m_frameRate = frameRate;
+		BufferedImage img = source.getImage(0);
+		m_format = new RGBFormat(new Dimension(img.getWidth(), img.getHeight()), img.getWidth() * img.getHeight(),
+				Format.intArray, frameRate, 24, 0x00ff0000, 0x0000ff00, 0x000000ff, 1, img.getWidth(), Format.FALSE,
+				Format.NOT_SPECIFIED);
+		m_data = new int[img.getWidth() * img.getHeight()];
+		m_frameDuration = (long) (((long) source.getCount() * 1000000) / (long) frameRate);
+	}
 
-  public Object[] getControls() 
-  {
-    return new Object[0];
-  }
+	public boolean willReadBlock() {
+		return false;
+	}
 
-  public Object getControl(String type) 
-  {
-    return null;
-  }
-  
-  public int getCurFrame()
-  {
-  	return m_curFrame;
-  }
-  
-  public int setCurFrame(int frame)
-  {
-//System.out.println("Setting frame to " + frame);  	
-  	if(frame >= 0 && frame < m_source.getCount())
-      m_curFrame = frame;
-  	
-  	m_ended = false;
-  	return m_curFrame;
-  }
+	public void read(Buffer buf) throws IOException {
+		if (m_curFrame < 0 || m_curFrame >= m_source.getCount()) {
+			// System.err.println("Done reading all images.");
+			buf.setEOM(true);
+			buf.setOffset(0);
+			buf.setLength(0);
+			m_curFrame = 0;
+			// m_ended = true;
+			return;
+		}
+
+		buf.setSequenceNumber(m_curFrame);
+		buf.setTimeStamp(m_curFrame * m_frameDuration);
+		buf.setDuration(m_frameDuration);
+		BufferedImage img = m_source.getImage(m_curFrame++);
+		buf.setData(img.getRGB(0, 0, img.getWidth(), img.getHeight(), m_data, 0, img.getWidth()));
+		buf.setLength(m_data.length);
+		buf.setOffset(0);
+		buf.setFlags(buf.getFlags() | Buffer.FLAG_KEY_FRAME);
+		buf.setFormat(m_format);
+	}
+
+	public Format getFormat() {
+		return m_format;
+	}
+
+	public ContentDescriptor getContentDescriptor() {
+		return new ContentDescriptor(ContentDescriptor.RAW);
+	}
+
+	public long getContentLength() {
+		return 0;
+	}
+
+	public boolean endOfStream() {
+		return m_ended;
+	}
+
+	public Object[] getControls() {
+		return new Object[0];
+	}
+
+	public Object getControl(String type) {
+		return null;
+	}
+
+	public int getCurFrame() {
+		return m_curFrame;
+	}
+
+	public int setCurFrame(int frame) {
+		// System.out.println("Setting frame to " + frame);
+		if (frame >= 0 && frame < m_source.getCount())
+			m_curFrame = frame;
+
+		m_ended = false;
+		return m_curFrame;
+	}
 }

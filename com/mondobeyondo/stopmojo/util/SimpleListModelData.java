@@ -45,55 +45,43 @@ package com.mondobeyondo.stopmojo.util;
 /**
  * @author Derry Bryson
  *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ *         To change the template for this generated type comment go to
+ *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class SimpleListModelData implements Comparable
-{
-  String
-    m_entryText;
-    
-  Object
-    m_data;
-    
-  public SimpleListModelData(String entryText, Object data)
-  {
-  	m_entryText = entryText;
-  	m_data = data;
-  }
-  
-  public String toString()
-  {
-  	return m_entryText;
-  }
-  
-  public String getEntryText()
-  {
-  	return m_entryText;
-  }
-  
-  public Object getData()
-  {
-  	return m_data;
-  }
-  
-  public boolean equals(Object o)
-  {
-  	if(o instanceof SimpleListModelData)
-  	{
-  		SimpleListModelData
-			  d = (SimpleListModelData)o;
-  		
-  		return m_entryText.equals(d.m_entryText) && m_data == d.m_data;
-  	}
-  	return false;
-  }
+public class SimpleListModelData implements Comparable {
+	String m_entryText;
 
-  public int compareTo(Object o) 
-  {
-  	SimpleListModelData
-		  d = (SimpleListModelData)o;
-  	
-	  return m_entryText.compareTo(d.m_entryText);
-  }
+	Object m_data;
+
+	public SimpleListModelData(String entryText, Object data) {
+		m_entryText = entryText;
+		m_data = data;
+	}
+
+	public String toString() {
+		return m_entryText;
+	}
+
+	public String getEntryText() {
+		return m_entryText;
+	}
+
+	public Object getData() {
+		return m_data;
+	}
+
+	public boolean equals(Object o) {
+		if (o instanceof SimpleListModelData) {
+			SimpleListModelData d = (SimpleListModelData) o;
+
+			return m_entryText.equals(d.m_entryText) && m_data == d.m_data;
+		}
+		return false;
+	}
+
+	public int compareTo(Object o) {
+		SimpleListModelData d = (SimpleListModelData) o;
+
+		return m_entryText.compareTo(d.m_entryText);
+	}
 }

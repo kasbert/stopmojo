@@ -46,55 +46,43 @@ import java.awt.image.BufferedImage;
 
 import javax.imageio.ImageIO;
 
-
 /**
  * @author derry
  *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ *         To change the template for this generated type comment go to
+ *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class ProjectFrameSource implements ImageFrameSource 
-{
-	private Project
-	  m_project;
-	
-	private int
-	  m_width = 320,
-		m_height = 240;
-	
-	public ProjectFrameSource(Project project)
-	{
+public class ProjectFrameSource implements ImageFrameSource {
+	private Project m_project;
+
+	private int m_width = 320, m_height = 240;
+
+	public ProjectFrameSource(Project project) {
 		m_project = project;
 		BufferedImage img = getImage(0);
 		m_width = img.getWidth();
 		m_height = img.getHeight();
 	}
-	
-	public int getCount() 
-	{
+
+	public int getCount() {
 		return m_project.getNumFrames();
 	}
 
-	public BufferedImage getImage(int frame) 
-	{
-		BufferedImage
-		  img = null;
-		
-		try
-		{
-//System.out.println("reading frame " + m_project.getFrameFile(frame + 1));			
+	public BufferedImage getImage(int frame) {
+		BufferedImage img = null;
+
+		try {
+			// System.out.println("reading frame " +
+			// m_project.getFrameFile(frame + 1));
 			img = ImageIO.read(m_project.getFrameFile(frame + 1));
-		}
-		catch(Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		if(img == null)
-		{
+
+		if (img == null) {
 			img = new BufferedImage(m_width, m_height, BufferedImage.TYPE_INT_ARGB);
 		}
-		
+
 		return img;
 	}
 }

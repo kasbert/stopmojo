@@ -49,27 +49,23 @@ import javax.swing.JPanel;
 /**
  * @author derry
  *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ *         To change the template for this generated type comment go to
+ *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class MediaPlayerPanel extends JPanel 
-{
-	MediaPlayer
-	  m_player;
-	
-  public MediaPlayerPanel(MediaPlayer player, boolean showControls)
-  {
-  	m_player = player;
-  	setLayout(new BorderLayout());
-  	add(player.getVisualComponent(), BorderLayout.CENTER);
-  	if(showControls)
-  	  add(player.getControlPanelComponent(), BorderLayout.SOUTH);
-  	doLayout();
-  }
-  
-  public Dimension getPreferredSize()
-  {
-  	return new Dimension(1, 1);
-//  	return m_player.getPreferredSize();
-  }
+public class MediaPlayerPanel extends JPanel {
+	MediaPlayer m_player;
+
+	public MediaPlayerPanel(MediaPlayer player, boolean showControls) {
+		m_player = player;
+		setLayout(new BorderLayout());
+		add(player.getVisualComponent(), BorderLayout.CENTER);
+		if (showControls)
+			add(player.getControlPanelComponent(), BorderLayout.SOUTH);
+		doLayout();
+	}
+
+	public Dimension getPreferredSize() {
+		return new Dimension(1, 1);
+		// return m_player.getPreferredSize();
+	}
 }

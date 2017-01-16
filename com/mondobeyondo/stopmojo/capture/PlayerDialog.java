@@ -68,185 +68,132 @@ import com.mondobeyondo.stopmojo.util.BasicDialog;
 /**
  * @author Derry Bryson
  *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ *         To change the template for this generated type comment go to
+ *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class PlayerDialog extends BasicDialog implements ControllerListener 
-{
-  MediaPlayer
-	  m_mediaPlayer;
-  
-  public PlayerDialog(JFrame frame, MediaPlayer mediaPlayer, String title)
-  {
-  	super(frame, true);
-  	m_mediaPlayer = mediaPlayer;
-  	m_mediaPlayer.addControllerListener(this);
-  	m_mediaPlayer.setPlaybackLoop(false);
-  	m_mediaPlayer.setControlPanelVisible(true);
-  	m_mediaPlayer.setMediaLocationVisible(true);
-  	m_mediaPlayer.setFixedAspectRatio(true);
-	  setTitle(title);
-	  
-		//setIconImage(EmailApp.s_iconImage);
-		addWindowListener(new java.awt.event.WindowAdapter()
-		{
-			public void windowClosing(java.awt.event.WindowEvent evt)
-			{
+public class PlayerDialog extends BasicDialog implements ControllerListener {
+	MediaPlayer m_mediaPlayer;
+
+	public PlayerDialog(JFrame frame, MediaPlayer mediaPlayer, String title) {
+		super(frame, true);
+		m_mediaPlayer = mediaPlayer;
+		m_mediaPlayer.addControllerListener(this);
+		m_mediaPlayer.setPlaybackLoop(false);
+		m_mediaPlayer.setControlPanelVisible(true);
+		m_mediaPlayer.setMediaLocationVisible(true);
+		m_mediaPlayer.setFixedAspectRatio(true);
+		setTitle(title);
+
+		// setIconImage(EmailApp.s_iconImage);
+		addWindowListener(new java.awt.event.WindowAdapter() {
+			public void windowClosing(java.awt.event.WindowEvent evt) {
 				onClose(evt);
 			}
 		});
-		
+
 		setSize(500, 500);
 		restoreSizeAndPosition();
-		
+
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
 		m_mediaPlayer.realize();
 	}
-  
-	private void onClose(java.awt.event.WindowEvent evt)
-	{
+
+	private void onClose(java.awt.event.WindowEvent evt) {
 		doFrameClose();
 	}
-	
-	private void doFrameClose()
-	{
-		if(m_mediaPlayer != null)
-		{
+
+	private void doFrameClose() {
+		if (m_mediaPlayer != null) {
 			m_mediaPlayer.close();
 		}
 		saveSizeAndPosition();
-		
+
 		dispose();
 	}
-	
-  public synchronized void controllerUpdate(ControllerEvent event) 
-  {
-System.out.println("controllerUpdate: " + event.toString());  	
-    if(event instanceof RealizeCompleteEvent) 
-    {
-      processRealizeComplete((RealizeCompleteEvent)event);
-    }
-    else if(event instanceof PrefetchCompleteEvent) 
-    {
-      processPrefetchComplete((PrefetchCompleteEvent)event);
-    }
-    else if(event instanceof ControllerErrorEvent) 
-    {
-      processControllerError((ControllerErrorEvent)event);
-    }
-    else if(event instanceof ControllerClosedEvent ) 
-    {
-      processControllerClosed ( (ControllerClosedEvent) event );
-    }
-    else if(event instanceof DurationUpdateEvent) 
-    {
-      Time t = ((DurationUpdateEvent)event).getDuration();
-    }
-    else if(event instanceof CachingControlEvent) 
-    {
-//      processCachingControl((CachingControlEvent)event);
-    }
-    else if(event instanceof StartEvent) 
-    {
-    }
-    else if(event instanceof MediaTimeSetEvent) 
-    {
-    }
-    else if(event instanceof TransitionEvent) 
-    {
-    }
-    else if(event instanceof RateChangeEvent) 
-    {
-    }
-    else if(event instanceof StopTimeChangeEvent) 
-    {
-    }
-    else if(event instanceof FormatChangeEvent) 
-    {
-//      processFormatChange((FormatChangeEvent) event);
-    }
-    else if(event instanceof SizeChangeEvent) 
-    {
-    }
-    else if(event.getClass().getName().endsWith("ReplaceURLEvent")) 
-    {
-//      processReplaceURL ( event );
-    }
-  }
 
-  protected void processRealizeComplete(RealizeCompleteEvent event) 
-  {
-//System.out.println("processRealizeComplete");  	
-    // Wait for visual to show up
-    Component compVis = m_mediaPlayer.getVisualComponent();
-    if (compVis != null) 
-    {
-      while (!compVis.isVisible()) 
-      {
-        try 
-		    {
-          Thread.sleep(10);
-        } 
-        catch (InterruptedException ie) 
-		    {
-        }
-      }
-    }
-    
-    // Ask the player to prefetch data and prepare to start.
-   	if(m_mediaPlayer != null && m_mediaPlayer.getPlayer() == event.getSourceController())
-    {
-    	getContentPane().add(new MediaPlayerPanel(m_mediaPlayer, true), BorderLayout.CENTER);
-    	validate();
-    }
-    event.getSourceController().prefetch();
-  }
+	public synchronized void controllerUpdate(ControllerEvent event) {
+		System.out.println("controllerUpdate: " + event.toString());
+		if (event instanceof RealizeCompleteEvent) {
+			processRealizeComplete((RealizeCompleteEvent) event);
+		} else if (event instanceof PrefetchCompleteEvent) {
+			processPrefetchComplete((PrefetchCompleteEvent) event);
+		} else if (event instanceof ControllerErrorEvent) {
+			processControllerError((ControllerErrorEvent) event);
+		} else if (event instanceof ControllerClosedEvent) {
+			processControllerClosed((ControllerClosedEvent) event);
+		} else if (event instanceof DurationUpdateEvent) {
+			Time t = ((DurationUpdateEvent) event).getDuration();
+		} else if (event instanceof CachingControlEvent) {
+			// processCachingControl((CachingControlEvent)event);
+		} else if (event instanceof StartEvent) {
+		} else if (event instanceof MediaTimeSetEvent) {
+		} else if (event instanceof TransitionEvent) {
+		} else if (event instanceof RateChangeEvent) {
+		} else if (event instanceof StopTimeChangeEvent) {
+		} else if (event instanceof FormatChangeEvent) {
+			// processFormatChange((FormatChangeEvent) event);
+		} else if (event instanceof SizeChangeEvent) {
+		} else if (event.getClass().getName().endsWith("ReplaceURLEvent")) {
+			// processReplaceURL ( event );
+		}
+	}
 
-  protected void processPrefetchComplete ( PrefetchCompleteEvent event ) 
-  {
-//System.out.println("processPrefetchComplete");
-  	if(m_mediaPlayer != null && m_mediaPlayer.getPlayer() == event.getSourceController())
-	  {
-		  m_mediaPlayer.start();
-	  }
-  }
+	protected void processRealizeComplete(RealizeCompleteEvent event) {
+		// System.out.println("processRealizeComplete");
+		// Wait for visual to show up
+		Component compVis = m_mediaPlayer.getVisualComponent();
+		if (compVis != null) {
+			while (!compVis.isVisible()) {
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException ie) {
+				}
+			}
+		}
 
-  protected void processFormatChange ( FormatChangeEvent event ) 
-  {
-/*	
-    killCurrentView ();
+		// Ask the player to prefetch data and prepare to start.
+		if (m_mediaPlayer != null && m_mediaPlayer.getPlayer() == event.getSourceController()) {
+			getContentPane().add(new MediaPlayerPanel(m_mediaPlayer, true), BorderLayout.CENTER);
+			validate();
+		}
+		event.getSourceController().prefetch();
+	}
 
-    // Get the visual component
-    panelVideo = new VideoPanel ( mediaPlayerCurrent );
-    panelVideo.setZoom ( dDefaultScale );
-    panelVideo.addMenuZoomActionListener ( this );
-    panelContent.add ( panelVideo, BorderLayout.CENTER );
+	protected void processPrefetchComplete(PrefetchCompleteEvent event) {
+		// System.out.println("processPrefetchComplete");
+		if (m_mediaPlayer != null && m_mediaPlayer.getPlayer() == event.getSourceController()) {
+			m_mediaPlayer.start();
+		}
+	}
 
-    // Get the control component
-    compControl = mediaPlayerCurrent.getControlPanelComponent ();
-    if ( compControl != null) {
-        panelContent.add ( compControl, BorderLayout.SOUTH );
-    }
-*/    
-  }
+	protected void processFormatChange(FormatChangeEvent event) {
+		/*
+		 * killCurrentView ();
+		 * 
+		 * // Get the visual component panelVideo = new VideoPanel (
+		 * mediaPlayerCurrent ); panelVideo.setZoom ( dDefaultScale );
+		 * panelVideo.addMenuZoomActionListener ( this ); panelContent.add (
+		 * panelVideo, BorderLayout.CENTER );
+		 * 
+		 * // Get the control component compControl =
+		 * mediaPlayerCurrent.getControlPanelComponent (); if ( compControl !=
+		 * null) { panelContent.add ( compControl, BorderLayout.SOUTH ); }
+		 */
+	}
 
-  protected void processControllerError ( ControllerErrorEvent event ) 
-  {
-  	JOptionPane.showMessageDialog(this, event.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-  }
+	protected void processControllerError(ControllerErrorEvent event) {
+		JOptionPane.showMessageDialog(this, event.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+	}
 
-  protected void processControllerClosed ( ControllerClosedEvent event ) 
-  {
-  	m_mediaPlayer = null;
-  }
+	protected void processControllerClosed(ControllerClosedEvent event) {
+		m_mediaPlayer = null;
+	}
 
-  protected void processCachingControl ( CachingControlEvent event ) 
-  {
-  }
+	protected void processCachingControl(CachingControlEvent event) {
+	}
 
-  protected void processReplaceURL ( ControllerEvent event ) 
-  {
-  }
-  
+	protected void processReplaceURL(ControllerEvent event) {
+	}
+
 }

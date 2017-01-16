@@ -61,38 +61,27 @@ import com.mondobeyondo.stopmojo.util.RTypeTextField;
 /**
  * @author Derry Bryson
  *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ *         To change the template for this generated type comment go to
+ *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class NewProjectDialog extends BasicDialog 
-{
-  private JButton
-    m_helpBut,
-    m_okBut,
-    m_cancelBut;
+public class NewProjectDialog extends BasicDialog {
+	private JButton m_helpBut, m_okBut, m_cancelBut;
 
-  private JTextField
-	  m_folderTextField,
-		m_nameTextField;
-  
-  private JButton
-	  m_browseBut;
-  
-  private boolean
-	  m_retval = false;
-  
-	public NewProjectDialog(Frame parent)
-	{
+	private JTextField m_folderTextField, m_nameTextField;
+
+	private JButton m_browseBut;
+
+	private boolean m_retval = false;
+
+	public NewProjectDialog(Frame parent) {
 		super(parent, true);
 		init();
 	}
-	
-  private void init()
-  {
-  	GridBagConstraints
-  	  gbc;
-  	  
-    setTitle("New Project");
+
+	private void init() {
+		GridBagConstraints gbc;
+
+		setTitle("New Project");
 
 		JPanel padPanel = new JPanel();
 		padPanel.setLayout(new GridBagLayout());
@@ -132,10 +121,8 @@ public class NewProjectDialog extends BasicDialog
 		m_okBut = new JButton("Ok");
 		m_okBut.setMnemonic(KeyEvent.VK_O);
 		m_okBut.setIcon(Capture.s_okIcon);
-		m_okBut.addActionListener(new java.awt.event.ActionListener()
-		{
-			public void actionPerformed(java.awt.event.ActionEvent evt)
-			{
+		m_okBut.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				onOk();
 			}
 		});
@@ -150,10 +137,8 @@ public class NewProjectDialog extends BasicDialog
 		m_cancelBut = new JButton("Cancel");
 		m_cancelBut.setMnemonic(KeyEvent.VK_C);
 		m_cancelBut.setIcon(Capture.s_cancelIcon);
-		m_cancelBut.addActionListener(new java.awt.event.ActionListener()
-		{
-			public void actionPerformed(java.awt.event.ActionEvent evt)
-			{
+		m_cancelBut.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				dispose();
 			}
 		});
@@ -167,86 +152,72 @@ public class NewProjectDialog extends BasicDialog
 		butPanel.add(m_cancelBut, gbc);
 
 		getContentPane().add(butPanel, java.awt.BorderLayout.SOUTH);
-		
+
 		getRootPane().setDefaultButton(m_okBut);
 
 		setSize(500, 300);
 		pack();
-//		restoreSize();
+		// restoreSize();
 		centerOnParent();
-  }
-  
-  private JPanel makeFieldPanel()
-  {
-		JLabel
-			label;
-  	  
-		GridBagConstraints 
-		  gbc;
-		  
+	}
+
+	private JPanel makeFieldPanel() {
+		JLabel label;
+
+		GridBagConstraints gbc;
+
 		FieldPanel fieldPanel = new FieldPanel();
-		
+
 		m_folderTextField = new RTypeTextField("A255,", Capture.getPref().get(Capture.PREF_LASTPRJFOLDER, "").trim());
 		m_browseBut = new JButton("...");
-		m_browseBut.addActionListener(new java.awt.event.ActionListener()
-		{
-			public void actionPerformed(java.awt.event.ActionEvent evt)
-			{
+		m_browseBut.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				onBrowseFolder();
 			}
 		});
 		fieldPanel.addField("Folder:", m_folderTextField, 150, m_browseBut, 0);
-		
-    fieldPanel.addField("Project Name:", m_nameTextField = new RTypeTextField("A100,", ""), 100);
 
-    fieldPanel.done();
-    		
+		fieldPanel.addField("Project Name:", m_nameTextField = new RTypeTextField("A100,", ""), 100);
+
+		fieldPanel.done();
+
 		return fieldPanel;
-  }
-  
-  private void onOk()
-  {
-  	if(m_folderTextField.getText().trim().equals(""))
-  	{
-  		Capture.errorMsg(this, "Must select folder!", "Error");
-  		return;
-  	}
-  	if(m_nameTextField.getText().trim().equals(""))
-  	{
-  		Capture.errorMsg(this, "Must enter project name!", "Error");
-  		return;
-  	}
-  	m_retval = true;
-  	dispose();
-  }
-  
-  public boolean showModal()
-  {
-  	show();
-  	return m_retval;
-  }
+	}
 
-  private void onBrowseFolder()
-  {
-  	JFileChooser
-		  fc = new JFileChooser(m_folderTextField.getText());
-  	
-  	fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-  	fc.setApproveButtonText("Select");
-  	fc.setDialogTitle("Select Folder");
-  	if(fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
-  	{
-  		m_folderTextField.setText(fc.getSelectedFile().getAbsolutePath());
-  	}
-  }
-  
-  public String getFolder()
-  {
-  	return m_folderTextField.getText().trim();
-  }
-  
-  public String getName()
-  {
-  	return m_nameTextField.getText().trim();
-  }
+	private void onOk() {
+		if (m_folderTextField.getText().trim().equals("")) {
+			Capture.errorMsg(this, "Must select folder!", "Error");
+			return;
+		}
+		if (m_nameTextField.getText().trim().equals("")) {
+			Capture.errorMsg(this, "Must enter project name!", "Error");
+			return;
+		}
+		m_retval = true;
+		dispose();
+	}
+
+	public boolean showModal() {
+		show();
+		return m_retval;
+	}
+
+	private void onBrowseFolder() {
+		JFileChooser fc = new JFileChooser(m_folderTextField.getText());
+
+		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		fc.setApproveButtonText("Select");
+		fc.setDialogTitle("Select Folder");
+		if (fc.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+			m_folderTextField.setText(fc.getSelectedFile().getAbsolutePath());
+		}
+	}
+
+	public String getFolder() {
+		return m_folderTextField.getText().trim();
+	}
+
+	public String getName() {
+		return m_nameTextField.getText().trim();
+	}
 }

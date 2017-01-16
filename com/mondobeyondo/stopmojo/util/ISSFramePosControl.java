@@ -50,56 +50,50 @@ import javax.media.control.FramePositioningControl;
 /**
  * @author derry
  *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ *         To change the template for this generated type comment go to
+ *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class ISSFramePosControl implements FramePositioningControl 
-{
-	private long
-	  m_frameDuration;
-	
-	private ImageFrameSource
-	  m_source;
-	
-	private ImageSourceStream
-	  m_stream;
-	
-	public ISSFramePosControl(float frameRate, ImageFrameSource source, ImageSourceStream stream)
-	{
-    m_frameDuration = (long)(source.getCount() / frameRate);
-    m_source = source;
-    m_stream = stream;
+public class ISSFramePosControl implements FramePositioningControl {
+	private long m_frameDuration;
+
+	private ImageFrameSource m_source;
+
+	private ImageSourceStream m_stream;
+
+	public ISSFramePosControl(float frameRate, ImageFrameSource source, ImageSourceStream stream) {
+		m_frameDuration = (long) (source.getCount() / frameRate);
+		m_source = source;
+		m_stream = stream;
 	}
-	
-	public int seek(int frame) 
-	{
-//System.out.println("seek to " + frame);		
+
+	public int seek(int frame) {
+		// System.out.println("seek to " + frame);
 		return m_stream.setCurFrame(frame);
 	}
 
-	public int skip(int frames) 
-	{
-//System.out.println("skipping " + frames);		
+	public int skip(int frames) {
+		// System.out.println("skipping " + frames);
 		return m_stream.setCurFrame(m_stream.getCurFrame() + frames);
 	}
 
-	public Time mapFrameToTime(int frame) 
-	{
-//		return new Time(m_frameDuration * frame);
+	public Time mapFrameToTime(int frame) {
+		// return new Time(m_frameDuration * frame);
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.media.control.FramePositioningControl#mapTimeToFrame(javax.media.Time)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * javax.media.control.FramePositioningControl#mapTimeToFrame(javax.media.
+	 * Time)
 	 */
-	public int mapTimeToFrame(Time time) 
-	{
-//		return (int)(time.getNanoseconds() / m_frameDuration);
+	public int mapTimeToFrame(Time time) {
+		// return (int)(time.getNanoseconds() / m_frameDuration);
 		return 0;
 	}
 
-	public Component getControlComponent() 
-	{
+	public Component getControlComponent() {
 		return null;
 	}
 }

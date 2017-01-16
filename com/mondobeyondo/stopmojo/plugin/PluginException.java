@@ -1,4 +1,5 @@
 package com.mondobeyondo.stopmojo.plugin;
+
 /*
  * Created on Apr 30, 2005
  *
@@ -42,18 +43,15 @@ package com.mondobeyondo.stopmojo.plugin;
 /**
  * @author derry
  *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ *         To change the template for this generated type comment go to
+ *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class PluginException extends Exception 
-{
-  public PluginException(String message)
-  {
-  	super(message);
-  }
-  
-  public PluginException(String message, Throwable cause)
-  {
-  	super(message, cause);
-  }
+public class PluginException extends Exception {
+	public PluginException(String message) {
+		super(message);
+	}
+
+	public PluginException(String message, Throwable cause) {
+		super(message, cause);
+	}
 }

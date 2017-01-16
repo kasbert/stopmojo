@@ -67,188 +67,149 @@ import com.mondobeyondo.stopmojo.util.ProjectFrameSource;
 /**
  * @author Derry Bryson
  *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ *         To change the template for this generated type comment go to
+ *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class ProjectMovieMaker implements ControllerListener, DataSinkListener 
-{
-	Processor
-	  m_processor = null;
-	
-	ImageDataSource
-	  m_dataSource = null;
-	
-	DataSink
-	  m_dataSink = null;
-	
-	Project
-	  m_project;
-	
-	String
-	  m_contentDesc,
-	  m_encoding,
-	  m_filename;
-	
-	int
-	  m_bpp;
-	
-  public ProjectMovieMaker(Project project, String contentDesc, 
-  		                     String encoding, String filename, int bpp) throws Exception
-  {
-  	m_project = project;
-  	m_contentDesc = contentDesc;
-  	m_encoding = encoding;
-  	m_filename = "file:" + filename;
-  	m_bpp = bpp;
-  }
-  
-  public void doit() throws Exception
-  {
-	  m_dataSource = new ImageDataSource(m_project.getFps(), new ProjectFrameSource(m_project));
-  	m_processor = Manager.createProcessor(m_dataSource);
-  	m_processor.addControllerListener(this);
+public class ProjectMovieMaker implements ControllerListener, DataSinkListener {
+	Processor m_processor = null;
 
-  	m_processor.configure();
-  	if(!waitForState(m_processor, Processor.Configured)) 
-  	{
-  		throw new ProjectMovieMakerException("Unable to configure processor!");
-  	}
+	ImageDataSource m_dataSource = null;
 
-  	m_processor.setContentDescriptor(new ContentDescriptor(m_contentDesc));
-  	
-  	TrackControl[] tc = m_processor.getTrackControls();
-    Format[] formats = tc[0].getSupportedFormats();
-    
-  	int
-		  i;
-  	
-  	for(i = 0; i < formats.length; i++)
-  		if(formats[i] instanceof VideoFormat)
-  		{
-      	VideoFormat
-		      vf = (VideoFormat)formats[i];
-   
-//      	System.out.println("checking " + vf.getEncoding() + " against " + m_encoding);
-      	if(vf.getEncoding().equalsIgnoreCase(m_encoding))
-      	  break;
-  		}
-  		
-  	if(i < formats.length)
-  		tc[0].setFormat(formats[i]);
+	DataSink m_dataSink = null;
+
+	Project m_project;
+
+	String m_contentDesc, m_encoding, m_filename;
+
+	int m_bpp;
+
+	public ProjectMovieMaker(Project project, String contentDesc, String encoding, String filename, int bpp)
+			throws Exception {
+		m_project = project;
+		m_contentDesc = contentDesc;
+		m_encoding = encoding;
+		m_filename = "file:" + filename;
+		m_bpp = bpp;
+	}
+
+	public void doit() throws Exception {
+		m_dataSource = new ImageDataSource(m_project.getFps(), new ProjectFrameSource(m_project));
+		m_processor = Manager.createProcessor(m_dataSource);
+		m_processor.addControllerListener(this);
+
+		m_processor.configure();
+		if (!waitForState(m_processor, Processor.Configured)) {
+			throw new ProjectMovieMakerException("Unable to configure processor!");
+		}
+
+		m_processor.setContentDescriptor(new ContentDescriptor(m_contentDesc));
+
+		TrackControl[] tc = m_processor.getTrackControls();
+		Format[] formats = tc[0].getSupportedFormats();
+
+		int i;
+
+		for (i = 0; i < formats.length; i++)
+			if (formats[i] instanceof VideoFormat) {
+				VideoFormat vf = (VideoFormat) formats[i];
+
+				// System.out.println("checking " + vf.getEncoding() + " against
+				// " + m_encoding);
+				if (vf.getEncoding().equalsIgnoreCase(m_encoding))
+					break;
+			}
+
+		if (i < formats.length)
+			tc[0].setFormat(formats[i]);
 		else
-  		throw new ProjectMovieMakerException("Invalid encoding!");
-  	
-   	m_processor.realize();
-   	if(!waitForState(m_processor, Processor.Realized)) 
-  		throw new ProjectMovieMakerException("Unable to realize processor!");
-    	
-   	try
-		{
-      m_dataSink = Manager.createDataSink(m_processor.getDataOutput(), new MediaLocator(m_filename));
-      
-      if(m_dataSink == null)
-    		throw new ProjectMovieMakerException("Unable to create data sink!");
-      
-      m_dataSink.addDataSinkListener(this);
-      m_dataSink.open();
-      m_processor.start();
-      m_dataSink.start();
-        
-      waitForFileDone();
-      m_dataSink.close();
-      m_processor.close();
+			throw new ProjectMovieMakerException("Invalid encoding!");
+
+		m_processor.realize();
+		if (!waitForState(m_processor, Processor.Realized))
+			throw new ProjectMovieMakerException("Unable to realize processor!");
+
+		try {
+			m_dataSink = Manager.createDataSink(m_processor.getDataOutput(), new MediaLocator(m_filename));
+
+			if (m_dataSink == null)
+				throw new ProjectMovieMakerException("Unable to create data sink!");
+
+			m_dataSink.addDataSinkListener(this);
+			m_dataSink.open();
+			m_processor.start();
+			m_dataSink.start();
+
+			waitForFileDone();
+			m_dataSink.close();
+			m_processor.close();
+		} catch (Exception e) {
+			throw new ProjectMovieMakerException("Error createing movie!", e);
 		}
-   	catch(Exception e)
-		{
-  		throw new ProjectMovieMakerException("Error createing movie!", e);
+	}
+
+	Object m_waitSync = new Object();
+	boolean m_stateTransitionOK = true;
+
+	/**
+	 * Block until the processor has transitioned to the given state. Return
+	 * false if the transition failed.
+	 */
+	boolean waitForState(Processor p, int state) {
+		synchronized (m_waitSync) {
+			try {
+				while (p.getState() < state && m_stateTransitionOK)
+					m_waitSync.wait();
+			} catch (Exception e) {
+			}
 		}
-  }
-  
-  Object m_waitSync = new Object();
-  boolean m_stateTransitionOK = true;
+		return m_stateTransitionOK;
+	}
 
-  /**
-   * Block until the processor has transitioned to the given state.
-   * Return false if the transition failed.
-   */
-  boolean waitForState(Processor p, int state) 
-  {
-    synchronized(m_waitSync) 
-		{
-      try 
-			{
-	      while(p.getState() < state && m_stateTransitionOK)
-	        m_waitSync.wait();
-      } catch (Exception e) {}
-    }
-    return m_stateTransitionOK;
-  }
+	public void controllerUpdate(ControllerEvent evt) {
+		if (evt instanceof ConfigureCompleteEvent || evt instanceof RealizeCompleteEvent
+				|| evt instanceof PrefetchCompleteEvent) {
+			synchronized (m_waitSync) {
+				m_stateTransitionOK = true;
+				m_waitSync.notifyAll();
+			}
+		} else if (evt instanceof ResourceUnavailableEvent) {
+			synchronized (m_waitSync) {
+				m_stateTransitionOK = false;
+				m_waitSync.notifyAll();
+			}
+		} else if (evt instanceof EndOfMediaEvent) {
+			evt.getSourceController().stop();
+			evt.getSourceController().close();
+		}
+	}
 
-  public void controllerUpdate(ControllerEvent evt) 
-  {
-    if(evt instanceof ConfigureCompleteEvent ||
-       evt instanceof RealizeCompleteEvent ||
-       evt instanceof PrefetchCompleteEvent) 
-    {
-      synchronized(m_waitSync) 
-			{
-	      m_stateTransitionOK = true;
-	      m_waitSync.notifyAll();
-      }
-    } 
-    else if(evt instanceof ResourceUnavailableEvent) 
-    {
-      synchronized(m_waitSync) 
-		  {
-	      m_stateTransitionOK = false;
-	      m_waitSync.notifyAll();
-      }
-    } 
-    else if(evt instanceof EndOfMediaEvent) 
-    {
-      evt.getSourceController().stop();
-      evt.getSourceController().close();
-    }
-  }
+	Object m_waitFileSync = new Object();
+	boolean m_fileDone = false;
+	boolean m_fileSuccess = true;
 
-  Object m_waitFileSync = new Object();
-  boolean m_fileDone = false;
-  boolean m_fileSuccess = true;
+	boolean waitForFileDone() {
+		synchronized (m_waitFileSync) {
+			try {
+				while (!m_fileDone)
+					m_waitFileSync.wait();
+			} catch (Exception e) {
+			}
+		}
+		return m_fileSuccess;
+	}
 
-  boolean waitForFileDone() 
-  {
-    synchronized(m_waitFileSync) 
-		{
-      try 
-			{
-	      while(!m_fileDone)
-	        m_waitFileSync.wait();
-      } 
-      catch (Exception e) 
-			{
-      }
-    }
-    return m_fileSuccess;
-  }
-
-  public void dataSinkUpdate(DataSinkEvent evt) 
-  {
-    if(evt instanceof EndOfStreamEvent) 
-    {
-      synchronized(m_waitFileSync) 
-			{
-	      m_fileDone = true;
-	      m_waitFileSync.notifyAll();
-      }
-    } 
-    else if(evt instanceof DataSinkErrorEvent) 
-    {
-      synchronized(m_waitFileSync) 
-			{
-	      m_fileDone = true;
-	      m_fileSuccess = false;
-	      m_waitFileSync.notifyAll();
-      }
-    }
-  }  
+	public void dataSinkUpdate(DataSinkEvent evt) {
+		if (evt instanceof EndOfStreamEvent) {
+			synchronized (m_waitFileSync) {
+				m_fileDone = true;
+				m_waitFileSync.notifyAll();
+			}
+		} else if (evt instanceof DataSinkErrorEvent) {
+			synchronized (m_waitFileSync) {
+				m_fileDone = true;
+				m_fileSuccess = false;
+				m_waitFileSync.notifyAll();
+			}
+		}
+	}
 }

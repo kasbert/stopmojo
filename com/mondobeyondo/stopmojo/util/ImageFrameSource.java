@@ -47,11 +47,11 @@ import java.awt.image.BufferedImage;
 /**
  * @author derry
  *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ *         To change the template for this generated type comment go to
+ *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public interface ImageFrameSource 
-{
-  public int getCount();
-  public BufferedImage getImage(int frame);
+public interface ImageFrameSource {
+	public int getCount();
+
+	public BufferedImage getImage(int frame);
 }

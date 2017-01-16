@@ -52,188 +52,147 @@ import javax.swing.JPanel;
 /**
  * @author derry
  *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ *         To change the template for this generated type comment go to
+ *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class ImagePanel extends JPanel 
-{
-  private Image
-	  m_images[];
-  
-  private AlphaComposite
-	  m_alphas[];
-  
-  private Color
-	  m_gridColor;
-  
-  private int
-	  m_numGridX,
-		m_numGridY;
-  
-  private boolean
-	  m_gridOn;
-  
-  public ImagePanel(int numImages)
-  {
-  	m_images = new Image[numImages];
-  	m_alphas = new AlphaComposite[numImages];
-  	for(int i = 0; i < numImages; i++)
-  	{
-  		m_images[i] = null;
-  		m_alphas[i] = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)1.0);
-  	}
-  	m_gridColor = Color.WHITE;
-  	m_numGridX = 10;
-  	m_numGridY = 10;
-  	m_gridOn = true;
-  	setOpaque(true);
-  }
-  
-  public void setImage(int index, Image image, float alpha)
-  {
-  	m_images[index] = image;
-  	m_alphas[index] = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
-  	repaint();
-  }
-  
-  public void setImage(int index, Image image)
-  {
-  	m_images[index] = image;
-  	repaint();
-  }
-  
-  public void setAlpha(int index, float alpha)
-  {
-  	m_alphas[index] = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
-  	repaint();
-  }
-  
-  public void setGridColor(Color c)
-  {
-  	m_gridColor = c;
-  	repaint();
-  }
-  
-  public Color getGridColor()
-  {
-  	return m_gridColor;
-  }
-  
-  public void setGridNumX(int numX)
-  {
-  	m_numGridX = numX;
-  	repaint();
-  }
-  
-  public int getGridNumX()
-  {
-  	return m_numGridX;
-  }
-  
-  public void setGridNumY(int numY)
-  {
-  	m_numGridY = numY;
-  	repaint();
-  }
-  
-  public int getGridNumY()
-  {
-  	return m_numGridY;
-  }
-  
-  public void showGrid(boolean on)
-  {
-  	m_gridOn = on;
-  	repaint();
-  }
-  
-  public boolean isShowingGrid()
-  {
-  	return m_gridOn;
-  }
-  
-  protected void paintComponent(Graphics g) 
-  {
-  	Graphics2D
-		  g2d = (Graphics2D)g.create();
-  	
-  	int
-		  w = getSize().width,
-			h = getSize().height;
-  	
-  	double
-			gw = w,
-			gh = h;
-  	
-  	double
-		  windowRatio = (double)w / (double)h;
+public class ImagePanel extends JPanel {
+	private Image m_images[];
 
-//  	g2d.setClip(null);
-//  	g2d.setTransform(new AffineTransform());
-		
+	private AlphaComposite m_alphas[];
+
+	private Color m_gridColor;
+
+	private int m_numGridX, m_numGridY;
+
+	private boolean m_gridOn;
+
+	public ImagePanel(int numImages) {
+		m_images = new Image[numImages];
+		m_alphas = new AlphaComposite[numImages];
+		for (int i = 0; i < numImages; i++) {
+			m_images[i] = null;
+			m_alphas[i] = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) 1.0);
+		}
+		m_gridColor = Color.WHITE;
+		m_numGridX = 10;
+		m_numGridY = 10;
+		m_gridOn = true;
+		setOpaque(true);
+	}
+
+	public void setImage(int index, Image image, float alpha) {
+		m_images[index] = image;
+		m_alphas[index] = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
+		repaint();
+	}
+
+	public void setImage(int index, Image image) {
+		m_images[index] = image;
+		repaint();
+	}
+
+	public void setAlpha(int index, float alpha) {
+		m_alphas[index] = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
+		repaint();
+	}
+
+	public void setGridColor(Color c) {
+		m_gridColor = c;
+		repaint();
+	}
+
+	public Color getGridColor() {
+		return m_gridColor;
+	}
+
+	public void setGridNumX(int numX) {
+		m_numGridX = numX;
+		repaint();
+	}
+
+	public int getGridNumX() {
+		return m_numGridX;
+	}
+
+	public void setGridNumY(int numY) {
+		m_numGridY = numY;
+		repaint();
+	}
+
+	public int getGridNumY() {
+		return m_numGridY;
+	}
+
+	public void showGrid(boolean on) {
+		m_gridOn = on;
+		repaint();
+	}
+
+	public boolean isShowingGrid() {
+		return m_gridOn;
+	}
+
+	protected void paintComponent(Graphics g) {
+		Graphics2D g2d = (Graphics2D) g.create();
+
+		int w = getSize().width, h = getSize().height;
+
+		double gw = w, gh = h;
+
+		double windowRatio = (double) w / (double) h;
+
+		// g2d.setClip(null);
+		// g2d.setTransform(new AffineTransform());
+
 		g2d.setColor(getBackground());
 		g2d.fillRect(0, 0, w, h);
 
-		for(int i = 0; i < m_images.length; i++)
-		{
-			Image
-			  img = m_images[i];
+		for (int i = 0; i < m_images.length; i++) {
+			Image img = m_images[i];
 
-			if(img != null)
-  	  {
-  		  double
-				  iw = img.getWidth(null),
-					ih = img.getHeight(null),
-			    x = 0,
-				  y = 0,
-  				imageRatio = (double)img.getWidth(null) / (double)img.getHeight(null),
-	  		  scale;
+			if (img != null) {
+				double iw = img.getWidth(null), ih = img.getHeight(null), x = 0, y = 0,
+						imageRatio = (double) img.getWidth(null) / (double) img.getHeight(null), scale;
 
-  		  if(windowRatio < imageRatio)
-  			  scale = (double)w / iw;
-  		  else
-  			  scale = (double)h / ih;
-  		
-  		  gw = (int)(iw * scale + 0.5);
-  		  gh = (int)(ih * scale + 0.5);
-  		  
-  		  AffineTransform
-			    at = new AffineTransform(),
-			    iat = new AffineTransform();
-  		
-  		  iat.scale(scale, scale);
-  		  if(scale * iw < w)
-  			  x = (w - (scale * iw)) / 2.0;
-  		  if(scale * ih < h)
-  			  y = (h - (scale * ih)) / 2.0;
-  	
-			  at.translate(x, y);
-  		  g2d.setTransform(at);
-  		  if(i == 0)
-  		  {
-  		  	g2d.setColor(Color.BLACK);
-					g2d.fillRect(0, 0, (int)(iw * scale), (int)(ih * scale));
-  		  }
-  		  g2d.setComposite(m_alphas[i]);
-  		  g2d.drawImage(img, iat, null);
-  	  }
+				if (windowRatio < imageRatio)
+					scale = (double) w / iw;
+				else
+					scale = (double) h / ih;
+
+				gw = (int) (iw * scale + 0.5);
+				gh = (int) (ih * scale + 0.5);
+
+				AffineTransform at = new AffineTransform(), iat = new AffineTransform();
+
+				iat.scale(scale, scale);
+				if (scale * iw < w)
+					x = (w - (scale * iw)) / 2.0;
+				if (scale * ih < h)
+					y = (h - (scale * ih)) / 2.0;
+
+				at.translate(x, y);
+				g2d.setTransform(at);
+				if (i == 0) {
+					g2d.setColor(Color.BLACK);
+					g2d.fillRect(0, 0, (int) (iw * scale), (int) (ih * scale));
+				}
+				g2d.setComposite(m_alphas[i]);
+				g2d.drawImage(img, iat, null);
+			}
 		}
-		
-		if(m_gridOn)
-		{
-			double
-			  i,
-				spacing;
+
+		if (m_gridOn) {
+			double i, spacing;
 
 			g2d.setComposite(AlphaComposite.SrcOver);
 			g2d.setColor(m_gridColor);
 			spacing = gh / m_numGridY;
-			for(i = spacing; i < gh; i += spacing)
-				g2d.drawLine(0, (int)(i + 0.5), (int)(gw - 1 + 0.5), (int)(i + 0.5));
+			for (i = spacing; i < gh; i += spacing)
+				g2d.drawLine(0, (int) (i + 0.5), (int) (gw - 1 + 0.5), (int) (i + 0.5));
 			spacing = gw / m_numGridX;
-			for(i = spacing; i < gw; i += spacing)
-				g2d.drawLine((int)(i + 0.5), 0, (int)(i + 0.5), (int)(gh - 1 + 0.5));
+			for (i = spacing; i < gw; i += spacing)
+				g2d.drawLine((int) (i + 0.5), 0, (int) (i + 0.5), (int) (gh - 1 + 0.5));
 		}
 		g2d.dispose();
-  }
+	}
 }

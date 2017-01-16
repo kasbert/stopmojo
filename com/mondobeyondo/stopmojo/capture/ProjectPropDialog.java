@@ -64,45 +64,33 @@ import com.mondobeyondo.stopmojo.util.Util;
 /**
  * @author Derry Bryson
  *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ *         To change the template for this generated type comment go to
+ *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class ProjectPropDialog extends BasicDialog 
-{
-  private JButton
-    m_helpBut,
-    m_okBut,
-    m_cancelBut;
+public class ProjectPropDialog extends BasicDialog {
+	private JButton m_helpBut, m_okBut, m_cancelBut;
 
-  private JTextField
-		m_fpsTextField;
-  
-  private JButton
-	  m_browseBut;
-  
-  private JComboBox
-	  m_formatComboBox;
-  
-  private Project
-	  m_prj;
-  
-	public ProjectPropDialog(Frame parent, Project prj)
-	{
+	private JTextField m_fpsTextField;
+
+	private JButton m_browseBut;
+
+	private JComboBox m_formatComboBox;
+
+	private Project m_prj;
+
+	public ProjectPropDialog(Frame parent, Project prj) {
 		super(parent, true);
 		init(prj);
 	}
-	
-  private void init(Project prj)
-  {
-  	int
-		  i;
-  	
-  	m_prj = prj;
 
-  	GridBagConstraints
-  	  gbc;
-  	  
-    setTitle("Project Properties");
+	private void init(Project prj) {
+		int i;
+
+		m_prj = prj;
+
+		GridBagConstraints gbc;
+
+		setTitle("Project Properties");
 
 		JPanel padPanel = new JPanel();
 		padPanel.setLayout(new GridBagLayout());
@@ -142,10 +130,8 @@ public class ProjectPropDialog extends BasicDialog
 		m_okBut = new JButton("Ok");
 		m_okBut.setMnemonic(KeyEvent.VK_O);
 		m_okBut.setIcon(Capture.s_okIcon);
-		m_okBut.addActionListener(new java.awt.event.ActionListener()
-		{
-			public void actionPerformed(java.awt.event.ActionEvent evt)
-			{
+		m_okBut.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				onOk();
 			}
 		});
@@ -160,10 +146,8 @@ public class ProjectPropDialog extends BasicDialog
 		m_cancelBut = new JButton("Cancel");
 		m_cancelBut.setMnemonic(KeyEvent.VK_C);
 		m_cancelBut.setIcon(Capture.s_cancelIcon);
-		m_cancelBut.addActionListener(new java.awt.event.ActionListener()
-		{
-			public void actionPerformed(java.awt.event.ActionEvent evt)
-			{
+		m_cancelBut.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				dispose();
 			}
 		});
@@ -177,74 +161,58 @@ public class ProjectPropDialog extends BasicDialog
 		butPanel.add(m_cancelBut, gbc);
 
 		getContentPane().add(butPanel, java.awt.BorderLayout.SOUTH);
-		
+
 		getRootPane().setDefaultButton(m_okBut);
 
 		pack();
 		setSize(500, 500);
 		restoreSize();
 		centerOnParent();
-  }
-  
-  private JPanel makeFieldPanel()
-  {
-		JLabel
-			label;
-  	  
-		GridBagConstraints 
-		  gbc;
-		  
-		int
-		  i,
-		  sel = -1;
-		  
+	}
+
+	private JPanel makeFieldPanel() {
+		JLabel label;
+
+		GridBagConstraints gbc;
+
+		int i, sel = -1;
+
 		FieldPanel fieldPanel = new FieldPanel();
-		
-		String[] 
-	    formats =
-		  {
-				"jpg",
-				"png",
-        "tif",
-				"bmp"
-		  };
+
+		String[] formats = { "jpg", "png", "tif", "bmp" };
 		m_formatComboBox = new JComboBox();
-		for(i = 0, sel = 0; i < formats.length; i++)
-			if(ImageIO.getImageWritersBySuffix(formats[i]).hasNext())
-			{
+		for (i = 0, sel = 0; i < formats.length; i++)
+			if (ImageIO.getImageWritersBySuffix(formats[i]).hasNext()) {
 				m_formatComboBox.addItem(formats[i]);
-				if(formats[i].equals(m_prj.getImageFormat()))
+				if (formats[i].equals(m_prj.getImageFormat()))
 					sel = i;
 			}
-		if(sel == formats.length)
+		if (sel == formats.length)
 			sel = 0;
 		m_formatComboBox.setSelectedIndex(sel);
 		fieldPanel.addField("Image File Format:", m_formatComboBox, 100);
-    fieldPanel.addField("Frames Per Second:", m_fpsTextField = new RTypeTextField("2I.DD,1 30", Util.formatNumber("#0.00", m_prj.getFps())), 50);
+		fieldPanel.addField("Frames Per Second:",
+				m_fpsTextField = new RTypeTextField("2I.DD,1 30", Util.formatNumber("#0.00", m_prj.getFps())), 50);
 
-    fieldPanel.done();
-    		
+		fieldPanel.done();
+
 		return fieldPanel;
-  }
-  
-  private void onOk()
-  {
-    if(m_formatComboBox.getSelectedIndex() != -1)
-      m_prj.setImageFormat((String)m_formatComboBox.getSelectedItem());
-    else
-    	m_prj.setImageFormat("");
-    m_prj.setFps((float)Util.atof(m_fpsTextField.getText()));
-  	
-    try
-		{
-      m_prj.write();
+	}
+
+	private void onOk() {
+		if (m_formatComboBox.getSelectedIndex() != -1)
+			m_prj.setImageFormat((String) m_formatComboBox.getSelectedItem());
+		else
+			m_prj.setImageFormat("");
+		m_prj.setFps((float) Util.atof(m_fpsTextField.getText()));
+
+		try {
+			m_prj.write();
+		} catch (Exception e) {
+			e.printStackTrace();
+			Capture.errorMsg(this, "Unable to write project!", "Error");
 		}
-    catch(Exception e)
-		{
-    	e.printStackTrace();
-    	Capture.errorMsg(this, "Unable to write project!", "Error");
-		}
-    
-  	dispose();
-  }
+
+		dispose();
+	}
 }

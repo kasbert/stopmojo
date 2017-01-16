@@ -45,19 +45,16 @@ package com.mondobeyondo.stopmojo.util;
 /**
  * @author Derry Bryson
  *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ *         To change the template for this generated type comment go to
+ *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class RTypeTextField extends JFormattedTextFieldX 
-{
-	public RTypeTextField(String rtype)
-	{
+public class RTypeTextField extends JFormattedTextFieldX {
+	public RTypeTextField(String rtype) {
 		super(new RTypeFormatter(rtype));
 	}
-	
-  public RTypeTextField(String rtype, String value)
-  {
+
+	public RTypeTextField(String rtype, String value) {
 		super(new RTypeFormatter(rtype));
 		setText(value);
-  }
+	}
 }

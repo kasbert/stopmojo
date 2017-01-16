@@ -35,94 +35,92 @@ import javax.media.protocol.*;
 import java.io.IOException;
 import javax.media.control.FormatControl;
 
-public class CDSWrapper extends PushBufferDataSource
-    implements CaptureDevice {
+public class CDSWrapper extends PushBufferDataSource implements CaptureDevice {
 
-    private PushBufferDataSource inputDS = null;
-    private boolean firstConnect = true;
-    private boolean firstDisconnect = true;
-    
-    public CDSWrapper(PushBufferDataSource incoming) {
-	this.inputDS = incoming;
-    }
+	private PushBufferDataSource inputDS = null;
+	private boolean firstConnect = true;
+	private boolean firstDisconnect = true;
 
-    public void connect() throws IOException {
-	if (firstConnect) {
-	    inputDS.connect();
-	    firstConnect = false;
+	public CDSWrapper(PushBufferDataSource incoming) {
+		this.inputDS = incoming;
 	}
-    }
 
-    public void disconnect() {
-	// Don't disconnect input first time
-	if (firstDisconnect) {
-	    firstDisconnect = false;
-	} else {
-	    close();
+	public void connect() throws IOException {
+		if (firstConnect) {
+			inputDS.connect();
+			firstConnect = false;
+		}
 	}
-    }
 
-    public void close() {
-	// If its been connected atleast once, disconnect the input
-	if (!firstConnect) {
-	    inputDS.disconnect();
+	public void disconnect() {
+		// Don't disconnect input first time
+		if (firstDisconnect) {
+			firstDisconnect = false;
+		} else {
+			close();
+		}
 	}
-    }
 
-    public MediaLocator getLocator() {
-	return inputDS.getLocator();
-    }
-    
-    public String getContentType() {
-	return inputDS.getContentType();
-    }
+	public void close() {
+		// If its been connected atleast once, disconnect the input
+		if (!firstConnect) {
+			inputDS.disconnect();
+		}
+	}
 
-    public void start() throws IOException {
-	inputDS.start();
-    }
+	public MediaLocator getLocator() {
+		return inputDS.getLocator();
+	}
 
-    public void stop() throws IOException {
-	inputDS.stop();
-    }
+	public String getContentType() {
+		return inputDS.getContentType();
+	}
 
-    /****************************************************************
-     * PushBufferDataSource
-     ****************************************************************/
-    
-    public PushBufferStream [] getStreams() {
-	return inputDS.getStreams();
-    }
+	public void start() throws IOException {
+		inputDS.start();
+	}
 
-    /****************************************************************
-     * CaptureDevice
-     ****************************************************************/
-    
-    public FormatControl[] getFormatControls() {
-	return ((CaptureDevice)inputDS).getFormatControls();
-    }
+	public void stop() throws IOException {
+		inputDS.stop();
+	}
 
-    public CaptureDeviceInfo getCaptureDeviceInfo() {
-	return ((CaptureDevice)inputDS).getCaptureDeviceInfo();
-    }
+	/****************************************************************
+	 * PushBufferDataSource
+	 ****************************************************************/
 
-    /****************************************************************
-     * Controls
-     ****************************************************************/
+	public PushBufferStream[] getStreams() {
+		return inputDS.getStreams();
+	}
 
-    public Object [] getControls() {
-	return inputDS.getControls();
-    }
+	/****************************************************************
+	 * CaptureDevice
+	 ****************************************************************/
 
-    public Object getControl(String ctype) {
-	return inputDS.getControl(ctype);
-    }
-    
-    /****************************************************************
-     * Duration
-     ****************************************************************/
+	public FormatControl[] getFormatControls() {
+		return ((CaptureDevice) inputDS).getFormatControls();
+	}
 
-    public Time getDuration() {
-	return inputDS.getDuration();
-    }
+	public CaptureDeviceInfo getCaptureDeviceInfo() {
+		return ((CaptureDevice) inputDS).getCaptureDeviceInfo();
+	}
+
+	/****************************************************************
+	 * Controls
+	 ****************************************************************/
+
+	public Object[] getControls() {
+		return inputDS.getControls();
+	}
+
+	public Object getControl(String ctype) {
+		return inputDS.getControl(ctype);
+	}
+
+	/****************************************************************
+	 * Duration
+	 ****************************************************************/
+
+	public Time getDuration() {
+		return inputDS.getDuration();
+	}
 }
-

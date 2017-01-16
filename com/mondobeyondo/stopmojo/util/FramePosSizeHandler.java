@@ -43,64 +43,47 @@ package com.mondobeyondo.stopmojo.util;
 import java.awt.Frame;
 import java.util.prefs.Preferences;
 
-
 /**
  * @author Derry Bryson
  *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ *         To change the template for this generated type comment go to
+ *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class FramePosSizeHandler
-{
-	private static final String
-	  PREF_X = "X",
-	  PREF_Y = "Y",
-	  PREF_WIDTH = "Width",
-	  PREF_HEIGHT = "Height",
-	  PREF_EXTENDEDSTATE = "ExtendedState";
-	  
-  public static void restoreSizeAndPosition(Frame frame) 
-  {
-  	Preferences
-  	  pref = Preferences.userNodeForPackage(frame.getClass());
-  	  
-  	int
-  	  x = frame.getX(),
-  	  y = frame.getY(),
-  	  w = frame.getWidth(),
-  	  h = frame.getHeight(),
-  	  es = frame.getExtendedState();
-  	  
-  	String
-  	  className = frame.getClass().getName();
-  	  
+public class FramePosSizeHandler {
+	private static final String PREF_X = "X", PREF_Y = "Y", PREF_WIDTH = "Width", PREF_HEIGHT = "Height",
+			PREF_EXTENDEDSTATE = "ExtendedState";
+
+	public static void restoreSizeAndPosition(Frame frame) {
+		Preferences pref = Preferences.userNodeForPackage(frame.getClass());
+
+		int x = frame.getX(), y = frame.getY(), w = frame.getWidth(), h = frame.getHeight(),
+				es = frame.getExtendedState();
+
+		String className = frame.getClass().getName();
+
 		x = pref.getInt(className + "_" + PREF_X, x);
 		y = pref.getInt(className + "_" + PREF_Y, y);
 		w = pref.getInt(className + "_" + PREF_WIDTH, w);
 		h = pref.getInt(className + "_" + PREF_HEIGHT, h);
 		es = pref.getInt(className + "_" + PREF_EXTENDEDSTATE, es);
-		
+
 		frame.setLocation(x, y);
-  	frame.setSize(w, h);
-  	if(es != Frame.ICONIFIED)
-  		frame.setExtendedState(es);
-  }
+		frame.setSize(w, h);
+		if (es != Frame.ICONIFIED)
+			frame.setExtendedState(es);
+	}
 
-  public static void saveSizeAndPosition(Frame frame) 
-  {
-		Preferences
-			pref = Preferences.userNodeForPackage(frame.getClass());
+	public static void saveSizeAndPosition(Frame frame) {
+		Preferences pref = Preferences.userNodeForPackage(frame.getClass());
 
-		String
-			className = frame.getClass().getName();
-  	  
-    if(frame.getExtendedState() == Frame.NORMAL)
-    {  	  
-      pref.putInt(className + "_" + PREF_X, frame.getX());
-	  	pref.putInt(className + "_" + PREF_Y, frame.getY());
-		  pref.putInt(className + "_" + PREF_WIDTH, frame.getWidth());
-		  pref.putInt(className + "_" + PREF_HEIGHT, frame.getHeight());
-    }
+		String className = frame.getClass().getName();
+
+		if (frame.getExtendedState() == Frame.NORMAL) {
+			pref.putInt(className + "_" + PREF_X, frame.getX());
+			pref.putInt(className + "_" + PREF_Y, frame.getY());
+			pref.putInt(className + "_" + PREF_WIDTH, frame.getWidth());
+			pref.putInt(className + "_" + PREF_HEIGHT, frame.getHeight());
+		}
 		pref.putInt(PREF_EXTENDEDSTATE, frame.getExtendedState());
-  }
+	}
 }

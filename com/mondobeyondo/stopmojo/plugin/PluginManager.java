@@ -49,88 +49,74 @@ import java.util.Vector;
 /**
  * @author derry
  *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ *         To change the template for this generated type comment go to
+ *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class PluginManager 
-{
-	private Vector
-	  m_plugins;
-	
-  public PluginManager()
-  {
-  }
-  
-  public int LoadPlugins(String path) throws Exception
-	{
-  	m_plugins = new Vector();
-  	
-  	File
-		  dir = new File(path);
-  	
-  	String[]
-			files = dir.list(new FilenameFilter() {
-        public boolean accept(File dir, String name) {
-          return name.endsWith(".jar");
-      }});
-  	
-  	for(int i = 0; i < files.length; i++)
-  	{
-  		File
-			  pluginFile = new File(path, files[i]);
-  		
-  	  try
-			{
-//  	  System.out.println("classpath=file:///" + pluginFile.getAbsolutePath());
-      	URLClassLoader loader = new URLClassLoader(new URL[] {new URL("file:///" + pluginFile.getAbsolutePath())}, this.getClass().getClassLoader());
-//  System.out.println("loading class " + files[i].substring(0, files[i].indexOf(".jar")));    	
-//        Class plugin = loader.loadClass(files[i].substring(0, files[i].indexOf(".jar")));
-    	  Class plugin = Class.forName(files[i].substring(0, files[i].indexOf(".jar")), true, loader);
-  	  	m_plugins.add(plugin.newInstance());
-			}
-  	  catch(UnsatisfiedLinkError er)
-			{
-  	  	
-			}
-  	  catch (Exception e)
-			{
-        e.printStackTrace();  	  	
-			}
-  	}
-  	
-  	return m_plugins.size();
+public class PluginManager {
+	private Vector m_plugins;
+
+	public PluginManager() {
 	}
-  
-  public Vector getPlugins()
-  {
-  	return m_plugins;
-  }
-  
-  public Vector getPlugins(Class c)
-  {
-    Vector
-		  v = new Vector();
-    
-    for(int i = 0; i < m_plugins.size(); i++)
-    {
-    	if(c.isAssignableFrom(m_plugins.elementAt(i).getClass()))
-    		v.add(m_plugins.elementAt(i));
-    }
-    	
-    return v;
-  }
-  
-  public void disposeAll()
-  {
-  	if(m_plugins != null)
-  		return;
-  	
-  	for(int i = 0; i < m_plugins.size(); i++)
-  	{
-  		Plugin 
-			  p = (Plugin)m_plugins.elementAt(i);
-  		
-  		p.dispose();
-  	}
-  }
+
+	public int LoadPlugins(String path) throws Exception {
+		m_plugins = new Vector();
+
+		File dir = new File(path);
+
+		String[] files = dir.list(new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				return name.endsWith(".jar");
+			}
+		});
+
+		for (int i = 0; i < files.length; i++) {
+			File pluginFile = new File(path, files[i]);
+
+			try {
+				// System.out.println("classpath=file:///" +
+				// pluginFile.getAbsolutePath());
+				URLClassLoader loader = new URLClassLoader(
+						new URL[] { new URL("file:///" + pluginFile.getAbsolutePath()) },
+						this.getClass().getClassLoader());
+				// System.out.println("loading class " + files[i].substring(0,
+				// files[i].indexOf(".jar")));
+				// Class plugin = loader.loadClass(files[i].substring(0,
+				// files[i].indexOf(".jar")));
+				Class plugin = Class.forName(files[i].substring(0, files[i].indexOf(".jar")), true, loader);
+				m_plugins.add(plugin.newInstance());
+			} catch (UnsatisfiedLinkError er) {
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		return m_plugins.size();
+	}
+
+	public Vector getPlugins() {
+		return m_plugins;
+	}
+
+	public Vector getPlugins(Class c) {
+		Vector v = new Vector();
+
+		for (int i = 0; i < m_plugins.size(); i++) {
+			if (c.isAssignableFrom(m_plugins.elementAt(i).getClass()))
+				v.add(m_plugins.elementAt(i));
+		}
+
+		return v;
+	}
+
+	public void disposeAll() {
+		if (m_plugins != null)
+			return;
+
+		for (int i = 0; i < m_plugins.size(); i++) {
+			Plugin p = (Plugin) m_plugins.elementAt(i);
+
+			p.dispose();
+		}
+	}
 }

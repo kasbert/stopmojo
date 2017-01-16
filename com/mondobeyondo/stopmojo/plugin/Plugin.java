@@ -43,44 +43,44 @@ package com.mondobeyondo.stopmojo.plugin;
 /**
  * @author derry
  *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ *         To change the template for this generated type comment go to
+ *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public interface Plugin 
-{
+public interface Plugin {
 	/**
 	 * 
 	 * @return
 	 */
-	
+
 	public String getID();
+
 	/**
 	 * 
 	 * @return
 	 */
 	public String getDesc();
-	
+
 	/**
 	 * 
 	 * @return
 	 */
 	public String getVendor();
-	
+
 	/**
 	 * 
 	 * @return
 	 */
 	public String getVersion();
-	
+
 	/**
 	 * 
 	 * @return
 	 */
-  public boolean isOk();
-  
-  /**
-   * 
-   *
-   */
-  public void dispose();
+	public boolean isOk();
+
+	/**
+	 * 
+	 *
+	 */
+	public void dispose();
 }

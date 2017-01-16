@@ -47,66 +47,58 @@ import java.text.Format;
 /**
  * @author Derry Bryson
  *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ *         To change the template for this generated type comment go to
+ *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 public class JFormattedTextFieldX extends javax.swing.JFormattedTextField {
 
-  /**
-   * 
-   */
-  public JFormattedTextFieldX() {
-    super();
-  }
+	/**
+	 * 
+	 */
+	public JFormattedTextFieldX() {
+		super();
+	}
 
-  /**
-   * @param value
-   */
-  public JFormattedTextFieldX(Object value) {
-    super(value);
-  }
+	/**
+	 * @param value
+	 */
+	public JFormattedTextFieldX(Object value) {
+		super(value);
+	}
 
-  /**
-   * @param format
-   */
-  public JFormattedTextFieldX(Format format) 
-  {
-    super(format);
-  }
+	/**
+	 * @param format
+	 */
+	public JFormattedTextFieldX(Format format) {
+		super(format);
+	}
 
-  /**
-   * @param formatter
-   */
-  public JFormattedTextFieldX(AbstractFormatter formatter) 
-  {
-    super(formatter);
-  }
+	/**
+	 * @param formatter
+	 */
+	public JFormattedTextFieldX(AbstractFormatter formatter) {
+		super(formatter);
+	}
 
-  /**
-   * @param factory
-   */
-  public JFormattedTextFieldX(AbstractFormatterFactory factory) 
-  {
-    super(factory);
-  }
+	/**
+	 * @param factory
+	 */
+	public JFormattedTextFieldX(AbstractFormatterFactory factory) {
+		super(factory);
+	}
 
-  /**
-   * @param factory
-   * @param currentValue
-   */
-  public JFormattedTextFieldX(AbstractFormatterFactory factory, Object currentValue) 
-  {
-    super(factory, currentValue);
-  }
+	/**
+	 * @param factory
+	 * @param currentValue
+	 */
+	public JFormattedTextFieldX(AbstractFormatterFactory factory, Object currentValue) {
+		super(factory, currentValue);
+	}
 
-	public Object getFinalValue()
-	{
-		try
-		{
-  		commitEdit();
-		}
-		catch(Exception e)
-		{
+	public Object getFinalValue() {
+		try {
+			commitEdit();
+		} catch (Exception e) {
 		}
 		return super.getValue();
 	}

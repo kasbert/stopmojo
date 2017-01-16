@@ -110,58 +110,41 @@ import com.mondobeyondo.stopmojo.util.Util;
 /**
  * @author Derry Bryson
  *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ *         To change the template for this generated type comment go to
+ *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class ExportDialog extends BasicDialog implements ControllerListener, ActionListener, DataSinkListener 
-{
-	Processor
-	  m_processor = null;
-	
-	ImageDataSource
-	  m_dataSource = null;
-	
-	DataSink
-	  m_dataSink = null;
-	
-	ContentDescriptor
-	  m_contentDesc[];
-	
-	Format
-	  m_formats[];
-	
-	JComboBox
-	  m_fileTypeComboBox,
-		m_encodingComboBox,
-		m_bppComboBox;
-	
-	Project
-	  m_project;
-	
-	JButton
-	  m_helpBut,
-		m_exportBut,
-		m_cancelBut;
-	
-	boolean
-	  m_exporting = false;
-	
-	String
-	  m_filename;
-	
-  public ExportDialog(JFrame frame, Project project) throws Exception
-  {
-  	super(frame, true);
-  	m_project = project;
-	  setTitle("Export Movie");
+public class ExportDialog extends BasicDialog implements ControllerListener, ActionListener, DataSinkListener {
+	Processor m_processor = null;
 
-	  m_dataSource = new ImageDataSource(m_project.getFps(), new ProjectFrameSource(m_project));
-  	m_processor = Manager.createProcessor(m_dataSource);
-  	m_processor.addControllerListener(this);
+	ImageDataSource m_dataSource = null;
 
-  	GridBagConstraints
-		  gbc;
-  	
+	DataSink m_dataSink = null;
+
+	ContentDescriptor m_contentDesc[];
+
+	Format m_formats[];
+
+	JComboBox m_fileTypeComboBox, m_encodingComboBox, m_bppComboBox;
+
+	Project m_project;
+
+	JButton m_helpBut, m_exportBut, m_cancelBut;
+
+	boolean m_exporting = false;
+
+	String m_filename;
+
+	public ExportDialog(JFrame frame, Project project) throws Exception {
+		super(frame, true);
+		m_project = project;
+		setTitle("Export Movie");
+
+		m_dataSource = new ImageDataSource(m_project.getFps(), new ProjectFrameSource(m_project));
+		m_processor = Manager.createProcessor(m_dataSource);
+		m_processor.addControllerListener(this);
+
+		GridBagConstraints gbc;
+
 		JPanel padPanel = new JPanel();
 		padPanel.setLayout(new GridBagLayout());
 		getContentPane().add(padPanel, BorderLayout.CENTER);
@@ -200,10 +183,8 @@ public class ExportDialog extends BasicDialog implements ControllerListener, Act
 		m_exportBut = new JButton("Export");
 		m_exportBut.setMnemonic(KeyEvent.VK_E);
 		m_exportBut.setIcon(Capture.s_okIcon);
-		m_exportBut.addActionListener(new java.awt.event.ActionListener()
-		{
-			public void actionPerformed(java.awt.event.ActionEvent evt)
-			{
+		m_exportBut.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				onExport();
 			}
 		});
@@ -218,10 +199,8 @@ public class ExportDialog extends BasicDialog implements ControllerListener, Act
 		m_cancelBut = new JButton("Cancel");
 		m_cancelBut.setMnemonic(KeyEvent.VK_C);
 		m_cancelBut.setIcon(Capture.s_cancelIcon);
-		m_cancelBut.addActionListener(new java.awt.event.ActionListener()
-		{
-			public void actionPerformed(java.awt.event.ActionEvent evt)
-			{
+		m_cancelBut.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				dispose();
 			}
 		});
@@ -235,428 +214,330 @@ public class ExportDialog extends BasicDialog implements ControllerListener, Act
 		butPanel.add(m_cancelBut, gbc);
 
 		getContentPane().add(butPanel, java.awt.BorderLayout.SOUTH);
-		
+
 		getRootPane().setDefaultButton(m_exportBut);
 
 		pack();
 		centerOnParent();
-  	m_processor.configure();
+		m_processor.configure();
 	}
-  
-	private void onClose(java.awt.event.WindowEvent evt)
-	{
+
+	private void onClose(java.awt.event.WindowEvent evt) {
 		doFrameClose();
 	}
-	
-	private void doFrameClose()
-	{
+
+	private void doFrameClose() {
 		saveSizeAndPosition();
-		
+
 		dispose();
 	}
-	
-  private JPanel makeFieldPanel()
-  {
-		JLabel
-			label;
-  	  
-		GridBagConstraints 
-		  gbc;
-		  
-		int
-		  sel = -1;
-		  
+
+	private JPanel makeFieldPanel() {
+		JLabel label;
+
+		GridBagConstraints gbc;
+
+		int sel = -1;
+
 		FieldPanel fieldPanel = new FieldPanel();
 
 		m_fileTypeComboBox = new JComboBox();
 		m_fileTypeComboBox.setEditable(false);
 		m_fileTypeComboBox.addActionListener(this);
 		fieldPanel.addField("File Type:", m_fileTypeComboBox, 50);
-		
+
 		m_encodingComboBox = new JComboBox();
 		m_encodingComboBox.setEditable(false);
 		m_encodingComboBox.addActionListener(this);
 		fieldPanel.addField("Encoding:", m_encodingComboBox, 50);
-		
+
 		m_bppComboBox = new JComboBox();
 		m_bppComboBox.setEditable(false);
 		m_bppComboBox.addActionListener(this);
 		fieldPanel.addField("Bits Per Pixel:", m_bppComboBox, 50);
 
 		fieldPanel.done();
-    		
+
 		return fieldPanel;
-  }
-  
-  private void cleanup()
-  {  	
-  	SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-      	if(m_dataSink != null)
-      	{
-//      		m_dataSink.removeDataSinkListener(this);
-      		m_dataSink.close();
-      	}
-      	
-      	if(m_processor != null)
-      	{
-//      		m_processor.removeControllerListener(this);
-      		m_processor.close();
-      	}
-      	
-//      	hide();
-      	dispose();
-      }
-    });
-  }
-  
-  private String getCurEncoding()
-  {
-  	VideoFormat
-  	  vf = (VideoFormat)((SimpleListModelData)m_encodingComboBox.getSelectedItem()).getData();
-  	
-  	return vf.getEncoding();
-  }
-  
-  private int getCurBpp()
-  {
-  	if(m_bppComboBox.getSelectedItem() != null)
-  		return Util.atoi(((SimpleListModelData)m_bppComboBox.getSelectedItem()).getEntryText());
-  	
-  	return Format.NOT_SPECIFIED;
-  }
-  
-  private VideoFormat getFormat()
-  {
-  	if(m_bppComboBox.getSelectedItem() != null)
-    	return (VideoFormat)((SimpleListModelData)m_bppComboBox.getSelectedItem()).getData();
-  	return (VideoFormat)((SimpleListModelData)m_encodingComboBox.getSelectedItem()).getData();
-  }
-  
-  private void onExport()
-  {
-  	VideoFormat
-		  vf = getFormat();
-  	
-  	if(vf == null)
-  	{
-  		JOptionPane.showMessageDialog(this, "Invalid format selected!");
-  		return;
-  	}
-  	
-//  	System.out.println("getFormat() = " + getFormat());
-  	m_processor.getTrackControls()[0].setFormat(getFormat());
-  	try 
-		{
-	    Codec codec[] = new Codec[1];
-	    codec[0] = new ProgressCodec(new ProgressMonitor(this, "Exporting Frames", "", 1, m_project.getNumFrames()));
-	    
-	  	m_processor.getTrackControls()[0].setCodecChain(codec);
-  	} 
-  	catch (UnsupportedPlugInException e) 
-		{
-	    System.err.println("The process does not support effects.");
-	  }
+	}
 
-  	
-  	JFileChooser
-	    fc = new JFileChooser(Capture.getPref().get(Capture.PREF_LASTEXPORTFOLDER, ""));
-	
-  	ContentDescriptor
-		  cd = (ContentDescriptor)((SimpleListModelData)m_fileTypeComboBox.getSelectedItem()).getData();
-  	
-    if(cd.getContentType().equals(FileTypeDescriptor.MSVIDEO))
-  	  fc.addChoosableFileFilter(new ExtensionFileFilter("avi", "AVI Movie File (*.avi)"));  	
-  	else if(cd.getContentType().equals(FileTypeDescriptor.QUICKTIME))
-  	  fc.addChoosableFileFilter(new ExtensionFileFilter("mov", "Quicktime Movie File (*.mov)"));  	
-	
-	  int rc = fc.showSaveDialog(this);
-	  if(rc == JFileChooser.APPROVE_OPTION)
-	  {
-	  	Capture.getPref().put(Capture.PREF_LASTEXPORTFOLDER, fc.getSelectedFile().getAbsolutePath());
-	  	
-	  	String
-			  ext = Util.getFileExtension(fc.getSelectedFile());
-	  	
-		  m_filename = "file:" + fc.getSelectedFile().getAbsolutePath();
+	private void cleanup() {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				if (m_dataSink != null) {
+					// m_dataSink.removeDataSinkListener(this);
+					m_dataSink.close();
+				}
 
-		  if(ext.equals("") && cd.getContentType().equals(FileTypeDescriptor.MSVIDEO))
-	    	m_filename += ".avi";
-	    else if(ext.equals("") && cd.getContentType().equals(FileTypeDescriptor.QUICKTIME))
-	    	m_filename += ".mov";
-	  	
-    	setCursor(new Cursor(Cursor.WAIT_CURSOR));
-    	setEnabled(false);
-    	
-    	m_exporting = true;
-    	m_processor.realize();
-//    	hide();
-	  }
-  }
-  
-  private void fillFileTypeComboBox()
-  {
-  	int
-		  count = 0,
-		  sel = 0;
-  	
-		DefaultComboBoxModel
-  		cm = new DefaultComboBoxModel();
-						  
-  	m_contentDesc = m_processor.getSupportedContentDescriptors();
-  	for(int i = 0; i < m_contentDesc.length; i++)
-  	{
-  		if(m_contentDesc[i].getContentType().equals(FileTypeDescriptor.MSVIDEO))
-  		{
-  			count++;
-  	    cm.addElement(new SimpleListModelData("AVI", m_contentDesc[i]));
-  		}
-  		else if(m_contentDesc[i].getContentType().equals(FileTypeDescriptor.QUICKTIME))
-  		{
-  			sel = count;
-  			count++;
-  	    cm.addElement(new SimpleListModelData("QUICKTIME", m_contentDesc[i]));
-  		}
-  	}
-  	m_fileTypeComboBox.setModel(cm);
-  	m_fileTypeComboBox.setSelectedIndex(sel);
-  }
-  
-  private void fillEncodingComboBox()
-  {
-  	int 
-		  i = m_fileTypeComboBox.getSelectedIndex();
-  	
-		TreeSet
-		  encodings = new TreeSet();
-		
-  	if(i != -1)
-  	{
-//System.out.println("get formats");  		
-      m_processor.setContentDescriptor((ContentDescriptor)((SimpleListModelData)m_fileTypeComboBox.getSelectedItem()).getData());
-  		TrackControl tc[] = m_processor.getTrackControls();
-  	  m_formats = tc[0].getSupportedFormats();
-  	  
-  	  TreeSet
- 	      set = new TreeSet();
-	
-	    DefaultComboBoxModel
- 		    cm = new DefaultComboBoxModel();
-	
-	    for(i = 0; i < m_formats.length; i++)
-	    {
-	  	  if(m_formats[i] instanceof VideoFormat)
-	  	  {
-	  		  VideoFormat
-				    vf = (VideoFormat)m_formats[i];
-		  	
-//System.out.println("saw vf = " + vf.toString());	  		
-  			  set.add(new SimpleListModelData(vf.getEncoding().toUpperCase(), vf));
-  	  	}
-	    }
-		  
-	    Iterator it = set.iterator();
- 	    while(it.hasNext())
- 	  	  cm.addElement(it.next());
-  	  
-  	  m_encodingComboBox.setModel(cm);
-  	  m_encodingComboBox.setSelectedIndex(0);
-  	}
-  }
-  
-  private void fillBppComboBox()
-  {
-//System.out.println("filling bpp combo box");	  	
-	  TreeSet
- 	    set = new TreeSet();
-	
-	  DefaultComboBoxModel
- 		  cm = new DefaultComboBoxModel();
-	
-	  for(int i = 0; i < m_formats.length; i++)
-	  {
-	  	if(m_formats[i] instanceof RGBFormat)
-	  	{
-	  		RGBFormat
-				  vf = (RGBFormat)m_formats[i];
-		  	
-//System.out.println("saw vf = " + vf.toString());	  		
-	  		if(vf.getEncoding().equals(getCurEncoding()))
-	  			if(vf.getBitsPerPixel() != -1)
-	  			  set.add(new SimpleListModelData("" + vf.getBitsPerPixel(), vf));
-	  			else 
-	  			  set.add(new SimpleListModelData("<Not Specified>", vf));
-	  	}
-	  }
-		  
-	  Iterator it = set.iterator();
- 	  while(it.hasNext())
- 	  	cm.addElement(it.next());
-  	  
- 	  m_bppComboBox.setModel(cm);
-	  if(cm.getSize() > 0)
-	  {
-   	  m_bppComboBox.setSelectedIndex(0);
-   	  m_bppComboBox.setEnabled(true);
-	  }
-	  else
-	  	m_bppComboBox.setEnabled(false);
-  }
-  
-  public synchronized void controllerUpdate(ControllerEvent event) 
-  {
-//System.out.println("controllerUpdate: " + event.toString());  	
-    if(event instanceof ConfigureCompleteEvent) 
-    {
-      processConfigureComplete((ConfigureCompleteEvent)event);
-    }
-    else if(event instanceof RealizeCompleteEvent) 
-    {
-      processRealizeComplete((RealizeCompleteEvent)event);
-    }
-    else if(event instanceof PrefetchCompleteEvent) 
-    {
-      processPrefetchComplete((PrefetchCompleteEvent)event);
-    }
-    else if(event instanceof ControllerErrorEvent) 
-    {
-      processControllerError((ControllerErrorEvent)event);
-    }
-    else if(event instanceof ControllerClosedEvent ) 
-    {
-      processControllerClosed ( (ControllerClosedEvent) event );
-    }
-    else if(event instanceof DurationUpdateEvent) 
-    {
-      Time t = ((DurationUpdateEvent)event).getDuration();
-    }
-    else if(event instanceof CachingControlEvent) 
-    {
-//      processCachingControl((CachingControlEvent)event);
-    }
-    else if(event instanceof StartEvent) 
-    {
-    }
-    else if(event instanceof MediaTimeSetEvent) 
-    {
-    }
-    else if(event instanceof TransitionEvent)     
-    {
-      if (event instanceof EndOfMediaEvent) 
-      {
-//      	System.out.println("endofmedia");
-  	    event.getSourceController().stop();
-  	    event.getSourceController().close();
-//  	    cleanup();
-  	  }  
-    }
-    else if(event instanceof RateChangeEvent) 
-    {
-    }
-    else if(event instanceof StopTimeChangeEvent) 
-    {
-    }
-    else if(event instanceof FormatChangeEvent) 
-    {
-//      processFormatChange((FormatChangeEvent) event);
-    }
-    else if(event instanceof SizeChangeEvent) 
-    {
-    }
-    else if(event.getClass().getName().endsWith("ReplaceURLEvent")) 
-    {
-//      processReplaceURL ( event );
-    }
-  }
+				if (m_processor != null) {
+					// m_processor.removeControllerListener(this);
+					m_processor.close();
+				}
 
-  protected void processConfigureComplete(ConfigureCompleteEvent event) 
-  {
-//System.out.println("processRealizeComplete");
-//  	m_processor.prefetch();
-  	fillFileTypeComboBox();
-  }
+				// hide();
+				dispose();
+			}
+		});
+	}
 
-  protected void processRealizeComplete(RealizeCompleteEvent event) 
-  {
-//System.out.println("processRealizeComplete");
-//  	m_processor.prefetch();
-    try
-	  {
-      m_dataSink = Manager.createDataSink(m_processor.getDataOutput(), new MediaLocator(m_filename));
-      
-      if(m_dataSink == null)
-      {
-  	    JOptionPane.showMessageDialog(this, "Unable to create data sink!", "Error", JOptionPane.ERROR_MESSAGE);
-  	    cleanup();
-      }
-      
-      m_dataSink.addDataSinkListener(this);
-      m_dataSink.open();
-      m_processor.start();
-      m_dataSink.start();
-	  }
-    catch(Exception e)
-	  {
-  	  e.printStackTrace();
-	    JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-	    cleanup();
-	  }
-  }
+	private String getCurEncoding() {
+		VideoFormat vf = (VideoFormat) ((SimpleListModelData) m_encodingComboBox.getSelectedItem()).getData();
 
-  protected void processPrefetchComplete ( PrefetchCompleteEvent event ) 
-  {
-//System.out.println("processPrefetchComplete");
-  	m_processor.start();
-  }
+		return vf.getEncoding();
+	}
 
-  protected void processFormatChange ( FormatChangeEvent event ) 
-  {
-  }
+	private int getCurBpp() {
+		if (m_bppComboBox.getSelectedItem() != null)
+			return Util.atoi(((SimpleListModelData) m_bppComboBox.getSelectedItem()).getEntryText());
 
-  protected void processControllerError ( ControllerErrorEvent event ) 
-  {
-  	JOptionPane.showMessageDialog(this, event.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-    cleanup();
-  }
+		return Format.NOT_SPECIFIED;
+	}
 
-  protected void processControllerClosed ( ControllerClosedEvent event ) 
-  {
-  }
+	private VideoFormat getFormat() {
+		if (m_bppComboBox.getSelectedItem() != null)
+			return (VideoFormat) ((SimpleListModelData) m_bppComboBox.getSelectedItem()).getData();
+		return (VideoFormat) ((SimpleListModelData) m_encodingComboBox.getSelectedItem()).getData();
+	}
 
-  protected void processCachingControl ( CachingControlEvent event ) 
-  {
-  }
+	private void onExport() {
+		VideoFormat vf = getFormat();
 
-  protected void processReplaceURL ( ControllerEvent event ) 
-  {
-  }
-  
-  public void actionPerformed(ActionEvent e) 
-  {
-  	if(e.getSource() == m_fileTypeComboBox)
-	  {
-		  fillEncodingComboBox();
-	  }
-  	else if(e.getSource() == m_encodingComboBox)
-  	{
-  		fillBppComboBox();
-  	}
-  }
+		if (vf == null) {
+			JOptionPane.showMessageDialog(this, "Invalid format selected!");
+			return;
+		}
 
-  public void dataSinkUpdate(DataSinkEvent e) 
-  {
-  	if(e instanceof DataSinkErrorEvent)
-  	{
-   		JOptionPane.showMessageDialog(this, "Error writing file!", "Error", JOptionPane.ERROR_MESSAGE);
-	    cleanup();
-  	}
-  	else if(e instanceof EndOfStreamEvent)
-  	{
-//  		System.out.println("datasink: endofstream");
-  		m_dataSink.close();
-  		cleanup();
-  	}
-  }
-  
+		// System.out.println("getFormat() = " + getFormat());
+		m_processor.getTrackControls()[0].setFormat(getFormat());
+		try {
+			Codec codec[] = new Codec[1];
+			codec[0] = new ProgressCodec(
+					new ProgressMonitor(this, "Exporting Frames", "", 1, m_project.getNumFrames()));
+
+			m_processor.getTrackControls()[0].setCodecChain(codec);
+		} catch (UnsupportedPlugInException e) {
+			System.err.println("The process does not support effects.");
+		}
+
+		JFileChooser fc = new JFileChooser(Capture.getPref().get(Capture.PREF_LASTEXPORTFOLDER, ""));
+
+		ContentDescriptor cd = (ContentDescriptor) ((SimpleListModelData) m_fileTypeComboBox.getSelectedItem())
+				.getData();
+
+		if (cd.getContentType().equals(FileTypeDescriptor.MSVIDEO))
+			fc.addChoosableFileFilter(new ExtensionFileFilter("avi", "AVI Movie File (*.avi)"));
+		else if (cd.getContentType().equals(FileTypeDescriptor.QUICKTIME))
+			fc.addChoosableFileFilter(new ExtensionFileFilter("mov", "Quicktime Movie File (*.mov)"));
+
+		int rc = fc.showSaveDialog(this);
+		if (rc == JFileChooser.APPROVE_OPTION) {
+			Capture.getPref().put(Capture.PREF_LASTEXPORTFOLDER, fc.getSelectedFile().getAbsolutePath());
+
+			String ext = Util.getFileExtension(fc.getSelectedFile());
+
+			m_filename = "file:" + fc.getSelectedFile().getAbsolutePath();
+
+			if (ext.equals("") && cd.getContentType().equals(FileTypeDescriptor.MSVIDEO))
+				m_filename += ".avi";
+			else if (ext.equals("") && cd.getContentType().equals(FileTypeDescriptor.QUICKTIME))
+				m_filename += ".mov";
+
+			setCursor(new Cursor(Cursor.WAIT_CURSOR));
+			setEnabled(false);
+
+			m_exporting = true;
+			m_processor.realize();
+			// hide();
+		}
+	}
+
+	private void fillFileTypeComboBox() {
+		int count = 0, sel = 0;
+
+		DefaultComboBoxModel cm = new DefaultComboBoxModel();
+
+		m_contentDesc = m_processor.getSupportedContentDescriptors();
+		for (int i = 0; i < m_contentDesc.length; i++) {
+			if (m_contentDesc[i].getContentType().equals(FileTypeDescriptor.MSVIDEO)) {
+				count++;
+				cm.addElement(new SimpleListModelData("AVI", m_contentDesc[i]));
+			} else if (m_contentDesc[i].getContentType().equals(FileTypeDescriptor.QUICKTIME)) {
+				sel = count;
+				count++;
+				cm.addElement(new SimpleListModelData("QUICKTIME", m_contentDesc[i]));
+			}
+		}
+		m_fileTypeComboBox.setModel(cm);
+		m_fileTypeComboBox.setSelectedIndex(sel);
+	}
+
+	private void fillEncodingComboBox() {
+		int i = m_fileTypeComboBox.getSelectedIndex();
+
+		TreeSet encodings = new TreeSet();
+
+		if (i != -1) {
+			// System.out.println("get formats");
+			m_processor.setContentDescriptor(
+					(ContentDescriptor) ((SimpleListModelData) m_fileTypeComboBox.getSelectedItem()).getData());
+			TrackControl tc[] = m_processor.getTrackControls();
+			m_formats = tc[0].getSupportedFormats();
+
+			TreeSet set = new TreeSet();
+
+			DefaultComboBoxModel cm = new DefaultComboBoxModel();
+
+			for (i = 0; i < m_formats.length; i++) {
+				if (m_formats[i] instanceof VideoFormat) {
+					VideoFormat vf = (VideoFormat) m_formats[i];
+
+					// System.out.println("saw vf = " + vf.toString());
+					set.add(new SimpleListModelData(vf.getEncoding().toUpperCase(), vf));
+				}
+			}
+
+			Iterator it = set.iterator();
+			while (it.hasNext())
+				cm.addElement(it.next());
+
+			m_encodingComboBox.setModel(cm);
+			m_encodingComboBox.setSelectedIndex(0);
+		}
+	}
+
+	private void fillBppComboBox() {
+		// System.out.println("filling bpp combo box");
+		TreeSet set = new TreeSet();
+
+		DefaultComboBoxModel cm = new DefaultComboBoxModel();
+
+		for (int i = 0; i < m_formats.length; i++) {
+			if (m_formats[i] instanceof RGBFormat) {
+				RGBFormat vf = (RGBFormat) m_formats[i];
+
+				// System.out.println("saw vf = " + vf.toString());
+				if (vf.getEncoding().equals(getCurEncoding()))
+					if (vf.getBitsPerPixel() != -1)
+						set.add(new SimpleListModelData("" + vf.getBitsPerPixel(), vf));
+					else
+						set.add(new SimpleListModelData("<Not Specified>", vf));
+			}
+		}
+
+		Iterator it = set.iterator();
+		while (it.hasNext())
+			cm.addElement(it.next());
+
+		m_bppComboBox.setModel(cm);
+		if (cm.getSize() > 0) {
+			m_bppComboBox.setSelectedIndex(0);
+			m_bppComboBox.setEnabled(true);
+		} else
+			m_bppComboBox.setEnabled(false);
+	}
+
+	public synchronized void controllerUpdate(ControllerEvent event) {
+		// System.out.println("controllerUpdate: " + event.toString());
+		if (event instanceof ConfigureCompleteEvent) {
+			processConfigureComplete((ConfigureCompleteEvent) event);
+		} else if (event instanceof RealizeCompleteEvent) {
+			processRealizeComplete((RealizeCompleteEvent) event);
+		} else if (event instanceof PrefetchCompleteEvent) {
+			processPrefetchComplete((PrefetchCompleteEvent) event);
+		} else if (event instanceof ControllerErrorEvent) {
+			processControllerError((ControllerErrorEvent) event);
+		} else if (event instanceof ControllerClosedEvent) {
+			processControllerClosed((ControllerClosedEvent) event);
+		} else if (event instanceof DurationUpdateEvent) {
+			Time t = ((DurationUpdateEvent) event).getDuration();
+		} else if (event instanceof CachingControlEvent) {
+			// processCachingControl((CachingControlEvent)event);
+		} else if (event instanceof StartEvent) {
+		} else if (event instanceof MediaTimeSetEvent) {
+		} else if (event instanceof TransitionEvent) {
+			if (event instanceof EndOfMediaEvent) {
+				// System.out.println("endofmedia");
+				event.getSourceController().stop();
+				event.getSourceController().close();
+				// cleanup();
+			}
+		} else if (event instanceof RateChangeEvent) {
+		} else if (event instanceof StopTimeChangeEvent) {
+		} else if (event instanceof FormatChangeEvent) {
+			// processFormatChange((FormatChangeEvent) event);
+		} else if (event instanceof SizeChangeEvent) {
+		} else if (event.getClass().getName().endsWith("ReplaceURLEvent")) {
+			// processReplaceURL ( event );
+		}
+	}
+
+	protected void processConfigureComplete(ConfigureCompleteEvent event) {
+		// System.out.println("processRealizeComplete");
+		// m_processor.prefetch();
+		fillFileTypeComboBox();
+	}
+
+	protected void processRealizeComplete(RealizeCompleteEvent event) {
+		// System.out.println("processRealizeComplete");
+		// m_processor.prefetch();
+		try {
+			m_dataSink = Manager.createDataSink(m_processor.getDataOutput(), new MediaLocator(m_filename));
+
+			if (m_dataSink == null) {
+				JOptionPane.showMessageDialog(this, "Unable to create data sink!", "Error", JOptionPane.ERROR_MESSAGE);
+				cleanup();
+			}
+
+			m_dataSink.addDataSinkListener(this);
+			m_dataSink.open();
+			m_processor.start();
+			m_dataSink.start();
+		} catch (Exception e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			cleanup();
+		}
+	}
+
+	protected void processPrefetchComplete(PrefetchCompleteEvent event) {
+		// System.out.println("processPrefetchComplete");
+		m_processor.start();
+	}
+
+	protected void processFormatChange(FormatChangeEvent event) {
+	}
+
+	protected void processControllerError(ControllerErrorEvent event) {
+		JOptionPane.showMessageDialog(this, event.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		cleanup();
+	}
+
+	protected void processControllerClosed(ControllerClosedEvent event) {
+	}
+
+	protected void processCachingControl(CachingControlEvent event) {
+	}
+
+	protected void processReplaceURL(ControllerEvent event) {
+	}
+
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == m_fileTypeComboBox) {
+			fillEncodingComboBox();
+		} else if (e.getSource() == m_encodingComboBox) {
+			fillBppComboBox();
+		}
+	}
+
+	public void dataSinkUpdate(DataSinkEvent e) {
+		if (e instanceof DataSinkErrorEvent) {
+			JOptionPane.showMessageDialog(this, "Error writing file!", "Error", JOptionPane.ERROR_MESSAGE);
+			cleanup();
+		} else if (e instanceof EndOfStreamEvent) {
+			// System.out.println("datasink: endofstream");
+			m_dataSink.close();
+			cleanup();
+		}
+	}
 
 }

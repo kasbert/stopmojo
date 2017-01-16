@@ -51,45 +51,38 @@ import javax.swing.JPanel;
 /**
  * @author Derry Bryson
  *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ *         To change the template for this generated type comment go to
+ *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class FieldPanel extends JPanel 
-{
-  private int
-    m_fieldCount;
-    
-  public FieldPanel()
-  {
-  	super();
-  	setLayout(new GridBagLayout());
-  	m_fieldCount = 0;
-  }
- 
-	public void done()
-	{
+public class FieldPanel extends JPanel {
+	private int m_fieldCount;
+
+	public FieldPanel() {
+		super();
+		setLayout(new GridBagLayout());
+		m_fieldCount = 0;
+	}
+
+	public void done() {
 		done(true);
 	}
-	
-  public void done(boolean addFill)
-  { 
-  	if(addFill)
-  	{
-  		GridBagConstraints gbc = new GridBagConstraints();
-	  	gbc.gridx = 0;
-		  gbc.gridy = m_fieldCount;
-		  gbc.gridwidth = 4;
-		  gbc.fill = GridBagConstraints.BOTH;
-		  gbc.anchor = GridBagConstraints.WEST;
-		  gbc.insets = new Insets(10, 10, 10, 10);
-		  gbc.weightx = 1.0;
-		  gbc.weighty = 10.0;
-		  add(new JPanel(), gbc);
-  	}
-  }
-  
-	public void addField(String label, Component field, int ipadx)
-	{
+
+	public void done(boolean addFill) {
+		if (addFill) {
+			GridBagConstraints gbc = new GridBagConstraints();
+			gbc.gridx = 0;
+			gbc.gridy = m_fieldCount;
+			gbc.gridwidth = 4;
+			gbc.fill = GridBagConstraints.BOTH;
+			gbc.anchor = GridBagConstraints.WEST;
+			gbc.insets = new Insets(10, 10, 10, 10);
+			gbc.weightx = 1.0;
+			gbc.weighty = 10.0;
+			add(new JPanel(), gbc);
+		}
+	}
+
+	public void addField(String label, Component field, int ipadx) {
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.gridx = 0;
 		gbc.gridy = m_fieldCount;
@@ -110,12 +103,11 @@ public class FieldPanel extends JPanel
 		gbc.weightx = 1.0;
 		gbc.weighty = .1;
 		add(field, gbc);
-		
+
 		m_fieldCount++;
 	}
-	
-	public void addField(int x, Component field, int ipadx)
-	{
+
+	public void addField(int x, Component field, int ipadx) {
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.gridx = x;
 		gbc.gridy = m_fieldCount;
@@ -127,17 +119,15 @@ public class FieldPanel extends JPanel
 		gbc.weightx = 1.0;
 		gbc.weighty = .1;
 		add(field, gbc);
-		
+
 		m_fieldCount++;
 	}
-	
-	public void addField(Component field, int ipadx)
-	{
+
+	public void addField(Component field, int ipadx) {
 		addField(1, field, ipadx);
 	}
-	
-	public void addField(String label, Component field, int ipadx, Component field2, int ipadx2)
-	{
+
+	public void addField(String label, Component field, int ipadx, Component field2, int ipadx2) {
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.gridx = 0;
 		gbc.gridy = m_fieldCount;
@@ -177,12 +167,11 @@ public class FieldPanel extends JPanel
 		gbc.weightx = 10;
 		gbc.weighty = .1;
 		add(new JPanel(), gbc);
-		
+
 		m_fieldCount++;
 	}
-	
-	public void addFieldC(String label, Component field, int ipadx, Component field2, int ipadx2)
-	{
+
+	public void addFieldC(String label, Component field, int ipadx, Component field2, int ipadx2) {
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.gridx = 0;
 		gbc.gridy = m_fieldCount;
@@ -222,7 +211,7 @@ public class FieldPanel extends JPanel
 		gbc.weightx = 10;
 		gbc.weighty = .1;
 		add(new JPanel(), gbc);
-		
+
 		m_fieldCount++;
 	}
 }

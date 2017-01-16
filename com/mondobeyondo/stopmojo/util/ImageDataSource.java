@@ -49,84 +49,68 @@ import javax.media.protocol.PullBufferStream;
 /**
  * @author derry
  *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ *         To change the template for this generated type comment go to
+ *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class ImageDataSource extends PullBufferDataSource 
-{
-	private double
-	  m_frameRate;
-	
-	ImageFrameSource 
-	  m_source;
-	
-  private ImageSourceStream 
-	  m_streams[];
+public class ImageDataSource extends PullBufferDataSource {
+	private double m_frameRate;
 
-  public ImageDataSource(float frameRate, ImageFrameSource source) 
-  {
-  	m_frameRate = frameRate;
-  	m_source = source;
-  	
-    m_streams = new ImageSourceStream[1];
-    m_streams[0] = new ImageSourceStream(frameRate, source);
-  }
+	ImageFrameSource m_source;
 
-  public void setLocator(MediaLocator source) 
-  {
-  } 
+	private ImageSourceStream m_streams[];
 
-  public MediaLocator getLocator() 
-  {
-    return null;
-  }
+	public ImageDataSource(float frameRate, ImageFrameSource source) {
+		m_frameRate = frameRate;
+		m_source = source;
 
-  public String getContentType() 
-  {
-    return ContentDescriptor.RAW;
-  }
+		m_streams = new ImageSourceStream[1];
+		m_streams[0] = new ImageSourceStream(frameRate, source);
+	}
 
-  public void connect() 
-  {
-    m_streams[0].setCurFrame(0);
-  }
+	public void setLocator(MediaLocator source) {
+	}
 
-  public void disconnect() 
-  {
-  }
+	public MediaLocator getLocator() {
+		return null;
+	}
 
-  public void start() 
-  {
-//    m_streams[0].setCurFrame(0);
-  }
+	public String getContentType() {
+		return ContentDescriptor.RAW;
+	}
 
-  public void stop() 
-  {
-  }
+	public void connect() {
+		m_streams[0].setCurFrame(0);
+	}
 
-  public PullBufferStream[] getStreams() 
-  {
-    return m_streams;
-  }
+	public void disconnect() {
+	}
 
-  public Time getDuration() 
-  {
-//    return DURATION_UNKNOWN;
-  	return new Time((long)(m_source.getCount() * 1000000 / m_frameRate));
-  }
+	public void start() {
+		// m_streams[0].setCurFrame(0);
+	}
 
-  public Object[] getControls() 
-  {
-  	Object controls[] = new Object[1];
-  	controls[0] = new ISSFramePosControl((float)m_frameRate, m_source, m_streams[0]);
-    return controls;
-  }
+	public void stop() {
+	}
 
-  public Object getControl(String type) 
-  {
-  	if(ISSFramePosControl.class.getName().equals(type))
-  		return new ISSFramePosControl((float)m_frameRate, m_source, m_streams[0]);
-  	
-    return null;
-  }
+	public PullBufferStream[] getStreams() {
+		return m_streams;
+	}
+
+	public Time getDuration() {
+		// return DURATION_UNKNOWN;
+		return new Time((long) (m_source.getCount() * 1000000 / m_frameRate));
+	}
+
+	public Object[] getControls() {
+		Object controls[] = new Object[1];
+		controls[0] = new ISSFramePosControl((float) m_frameRate, m_source, m_streams[0]);
+		return controls;
+	}
+
+	public Object getControl(String type) {
+		if (ISSFramePosControl.class.getName().equals(type))
+			return new ISSFramePosControl((float) m_frameRate, m_source, m_streams[0]);
+
+		return null;
+	}
 }

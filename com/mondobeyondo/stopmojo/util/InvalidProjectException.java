@@ -45,13 +45,11 @@ package com.mondobeyondo.stopmojo.util;
 /**
  * @author derry
  *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ *         To change the template for this generated type comment go to
+ *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class InvalidProjectException extends Exception 
-{
-  InvalidProjectException(String why)
-	{
-  	super("Invalid Project - " + why);
+public class InvalidProjectException extends Exception {
+	InvalidProjectException(String why) {
+		super("Invalid Project - " + why);
 	}
 }

@@ -51,171 +51,147 @@ import javax.swing.text.DocumentFilter;
 /**
  * @author Derry Bryson
  *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ *         To change the template for this generated type comment go to
+ *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class RTypeDocumentFilter extends DocumentFilter 
-{
-	private String
-	  m_rtype,
-  	m_valset;
-	  
-  private double
-	  m_min,
-	  m_max;
-	  
-  private int
-	  m_maxlen,
-	  m_ints,
-	  m_decs,
-	  m_digs;
-	  
-  private boolean
-	  m_upper;
-	  
-  public RTypeDocumentFilter(String rtype)
-  {
-		int 
-			i;
-		
+public class RTypeDocumentFilter extends DocumentFilter {
+	private String m_rtype, m_valset;
+
+	private double m_min, m_max;
+
+	private int m_maxlen, m_ints, m_decs, m_digs;
+
+	private boolean m_upper;
+
+	public RTypeDocumentFilter(String rtype) {
+		int i;
+
 		m_rtype = rtype;
 		m_valset = "";
 		m_upper = false;
-		
-		switch(Character.toUpperCase(m_rtype.charAt(0)))
-		{
-			case 'U':
-				m_upper = true;
-			  
-			case 'A':
-				m_maxlen = Util.atoi(m_rtype.substring(1));
-				i = Util.Pos(',', m_rtype);
-				if(i > 0)
-					m_valset = m_rtype.substring(i);
-			break;
-		  
-			case 'S':
+
+		switch (Character.toUpperCase(m_rtype.charAt(0))) {
+		case 'U':
+			m_upper = true;
+
+		case 'A':
+			m_maxlen = Util.atoi(m_rtype.substring(1));
+			i = Util.Pos(',', m_rtype);
+			if (i > 0)
+				m_valset = m_rtype.substring(i);
 			break;
 
-			case 'C':
-				m_maxlen = 8;
+		case 'S':
 			break;
 
-			case 'Y':
-				m_maxlen = 1;
-				m_upper = true;
+		case 'C':
+			m_maxlen = 8;
 			break;
 
-			case '0': case '1': case '2': case '3': case '4': case '5':
-			case '6': case '7': case '8': case '9': case 'I': case 'D':
-			case 'Z': case 'F':
-			{
-				String
-					spec;
-				  
-				if(Util.Pos(',', m_rtype) != 0)
-					spec = m_rtype.substring(0, Util.Pos(',', m_rtype) - 1);
-				else
-					spec = m_rtype;
-				if(m_rtype.charAt(m_rtype.length() - 1) == ',')
-				{
-					/*No ranges specified, assume maximum in both directions.*/
-					m_min = -9999999999.99;
-					m_max = 9999999999.99;
-				}
-				else
-				{
-					/*Range specified, parse and set.*/
-					String range = m_rtype.substring(Util.Pos(',', m_rtype));
-					m_min = Util.atof(range);
-					range = range.substring(Util.Pos(' ', range));
-					m_max = Util.atof(range);
-				}
-				PatternSize patsize = new PatternSize();
-				m_maxlen = Util.Num_Pattern_Size(spec, patsize);
-				m_ints = patsize.Ints;
-				m_decs = patsize.Decs;
-				m_digs = patsize.Digs;
-				m_valset = "0123456789";
-				if(m_min < 0.0)
-				  m_valset += "-";
-				if(m_decs > 0)
-				  m_valset += ".";
+		case 'Y':
+			m_maxlen = 1;
+			m_upper = true;
+			break;
+
+		case '0':
+		case '1':
+		case '2':
+		case '3':
+		case '4':
+		case '5':
+		case '6':
+		case '7':
+		case '8':
+		case '9':
+		case 'I':
+		case 'D':
+		case 'Z':
+		case 'F': {
+			String spec;
+
+			if (Util.Pos(',', m_rtype) != 0)
+				spec = m_rtype.substring(0, Util.Pos(',', m_rtype) - 1);
+			else
+				spec = m_rtype;
+			if (m_rtype.charAt(m_rtype.length() - 1) == ',') {
+				/* No ranges specified, assume maximum in both directions. */
+				m_min = -9999999999.99;
+				m_max = 9999999999.99;
+			} else {
+				/* Range specified, parse and set. */
+				String range = m_rtype.substring(Util.Pos(',', m_rtype));
+				m_min = Util.atof(range);
+				range = range.substring(Util.Pos(' ', range));
+				m_max = Util.atof(range);
 			}
+			PatternSize patsize = new PatternSize();
+			m_maxlen = Util.Num_Pattern_Size(spec, patsize);
+			m_ints = patsize.Ints;
+			m_decs = patsize.Decs;
+			m_digs = patsize.Digs;
+			m_valset = "0123456789";
+			if (m_min < 0.0)
+				m_valset += "-";
+			if (m_decs > 0)
+				m_valset += ".";
+		}
 			break;
 		} /* end switch */
-		
-//		System.out.println("m_maxlen = " + m_maxlen);
-  }
-  
-  private String validChars(String string)
-  {
-  	if(m_valset.equals(""))
-  	  return string;
-  	  
-  	int
-  	  i;
-  	  
-  	StringBuffer
-  	  sb = new StringBuffer();
-  	  
-  	for(i = 0; i < string.length(); i++)
-  	{
-  		if(m_valset.indexOf(string.charAt(i)) != -1)
-  		  sb.append(string.charAt(i));
-  		else
-  			Toolkit.getDefaultToolkit().beep();
-  	}
-  	
-  	return sb.toString();
-  }
-  
-	public void insertString(DocumentFilter.FilterBypass fb,
-													 int offset,
-													 String string,
-													 AttributeSet attr)
-										throws BadLocationException
-  {
-		if(m_upper)
+
+		// System.out.println("m_maxlen = " + m_maxlen);
+	}
+
+	private String validChars(String string) {
+		if (m_valset.equals(""))
+			return string;
+
+		int i;
+
+		StringBuffer sb = new StringBuffer();
+
+		for (i = 0; i < string.length(); i++) {
+			if (m_valset.indexOf(string.charAt(i)) != -1)
+				sb.append(string.charAt(i));
+			else
+				Toolkit.getDefaultToolkit().beep();
+		}
+
+		return sb.toString();
+	}
+
+	public void insertString(DocumentFilter.FilterBypass fb, int offset, String string, AttributeSet attr)
+			throws BadLocationException {
+		if (m_upper)
 			string = string.toUpperCase();
-  	  
-  	StringBuffer
-  	  sb = new StringBuffer(fb.getDocument().getText(0, fb.getDocument().getLength()));
-  	  										
-  	string = validChars(string);
-  	
-  	if(!string.equals(""))
-  	{
-      sb.insert(offset, string);  	  
-			if(sb.toString().length() <= m_maxlen)
-        super.insertString(fb, offset, string, attr);
-			else
-				Toolkit.getDefaultToolkit().beep();
-  	}						 
-  }
-										
-	public void replace(DocumentFilter.FilterBypass fb,
-											int offset,
-											int length,
-											String string,
-											AttributeSet attr)
-							 throws BadLocationException
-  {										
-  	if(m_upper)
-  	  string = string.toUpperCase();
-  	  
-		StringBuffer
-			sb = new StringBuffer(fb.getDocument().getText(0, fb.getDocument().getLength()));
-  	  										 
+
+		StringBuffer sb = new StringBuffer(fb.getDocument().getText(0, fb.getDocument().getLength()));
+
 		string = validChars(string);
-  	
-		if(!string.equals("") )
-		{
-  		sb.replace(offset, offset + length, string);
-		  if(sb.toString().length() <= m_maxlen)
-			  super.replace(fb, offset, length, string, attr);
+
+		if (!string.equals("")) {
+			sb.insert(offset, string);
+			if (sb.toString().length() <= m_maxlen)
+				super.insertString(fb, offset, string, attr);
 			else
 				Toolkit.getDefaultToolkit().beep();
-		}						 
-  }
+		}
+	}
+
+	public void replace(DocumentFilter.FilterBypass fb, int offset, int length, String string, AttributeSet attr)
+			throws BadLocationException {
+		if (m_upper)
+			string = string.toUpperCase();
+
+		StringBuffer sb = new StringBuffer(fb.getDocument().getText(0, fb.getDocument().getLength()));
+
+		string = validChars(string);
+
+		if (!string.equals("")) {
+			sb.replace(offset, offset + length, string);
+			if (sb.toString().length() <= m_maxlen)
+				super.replace(fb, offset, length, string, attr);
+			else
+				Toolkit.getDefaultToolkit().beep();
+		}
+	}
 }

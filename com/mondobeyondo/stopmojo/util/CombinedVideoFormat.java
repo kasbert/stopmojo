@@ -47,28 +47,21 @@ import javax.media.format.VideoFormat;
 /**
  * @author derry
  *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ *         To change the template for this generated type comment go to
+ *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class CombinedVideoFormat 
-{
-	private String
-	  m_encoding;
-	
-  private Vector
-	  m_formats,
-		m_frameRates,
-		m_sizes;
-  
-  public CombinedVideoFormat(String encoding)
-  {
-  	m_encoding = encoding;
-  	m_formats = new Vector();
-  	m_frameRates = new Vector();
-  	m_sizes = new Vector();
-  }
-  
-  public void addFormat(VideoFormat format)
-  {
-  }
+public class CombinedVideoFormat {
+	private String m_encoding;
+
+	private Vector m_formats, m_frameRates, m_sizes;
+
+	public CombinedVideoFormat(String encoding) {
+		m_encoding = encoding;
+		m_formats = new Vector();
+		m_frameRates = new Vector();
+		m_sizes = new Vector();
+	}
+
+	public void addFormat(VideoFormat format) {
+	}
 }

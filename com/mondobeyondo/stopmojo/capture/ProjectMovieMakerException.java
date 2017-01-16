@@ -43,18 +43,15 @@ package com.mondobeyondo.stopmojo.capture;
 /**
  * @author derry
  *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ *         To change the template for this generated type comment go to
+ *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class ProjectMovieMakerException extends Exception 
-{
-  public ProjectMovieMakerException(String msg)
-  {
-  	super(msg);
-  }
-  
-  public ProjectMovieMakerException(String msg, Throwable cause)
-  {
-  	super(msg, cause);
-  }
+public class ProjectMovieMakerException extends Exception {
+	public ProjectMovieMakerException(String msg) {
+		super(msg);
+	}
+
+	public ProjectMovieMakerException(String msg, Throwable cause) {
+		super(msg, cause);
+	}
 }

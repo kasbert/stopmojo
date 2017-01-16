@@ -81,461 +81,385 @@ import com.mondobeyondo.stopmojo.util.Util;
 /**
  * @author derry
  *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ *         To change the template for this generated type comment go to
+ *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class JMFCapturePlugin implements CapturePlugin, ControllerListener 
-{
-	private static final String
-	  ID = "JMFCapture1",
-		DESC = "JMF Capture",
-		VENDOR = "StopMojo Project",
-		VERSION = "1.0";
-	
-	private boolean 
-	  m_ok = false;
-	
-	private String
-	  m_devName = null;
-	
-  private DataSource
-    m_capDS = null;
+public class JMFCapturePlugin implements CapturePlugin, ControllerListener {
+	private static final String ID = "JMFCapture1", DESC = "JMF Capture", VENDOR = "StopMojo Project", VERSION = "1.0";
 
-  private MediaPlayer
-    m_capMediaPlayer = null;
+	private boolean m_ok = false;
 
-  private FrameGrabbingControl
-    m_grabber = null;
-  
-  private Object 
-	  m_waitSync = new Object();
-  
-  private boolean 
-	  m_stateTransitionOK = true;
-  
-  private JFrame
-	  m_parent;
+	private String m_devName = null;
 
-	public JMFCapturePlugin()
-	{
-		int
-		  devCount = 0;
-		
+	private DataSource m_capDS = null;
+
+	private MediaPlayer m_capMediaPlayer = null;
+
+	private FrameGrabbingControl m_grabber = null;
+
+	private Object m_waitSync = new Object();
+
+	private boolean m_stateTransitionOK = true;
+
+	private JFrame m_parent;
+
+	public JMFCapturePlugin() {
+		int devCount = 0;
+
 		//
-		//  do a simple check to see if JMF is installed and we have some
-		//  capture devices available.
-		try
-		{
-  		Vector
-	      devs = CaptureDeviceManager.getDeviceList(null);
-  		
-  		for(int i = 0; i < devs.size(); i++)
-  		{
-  			CaptureDeviceInfo
-  			  c = (CaptureDeviceInfo)devs.elementAt(i);
-  				
-  			Format[]
-  		    formats = c.getFormats();
-  				
-  			for(int j = 0; j < formats.length; j++)
-  				if(formats[j] instanceof VideoFormat)
-  				{
-  					devCount++;
-  					break;
-  				}
-  		}
-  		m_ok = devs != null && devCount > 0;
-		}
-		catch (Exception e)
-		{
+		// do a simple check to see if JMF is installed and we have some
+		// capture devices available.
+		try {
+			Vector devs = CaptureDeviceManager.getDeviceList(null);
+
+			for (int i = 0; i < devs.size(); i++) {
+				CaptureDeviceInfo c = (CaptureDeviceInfo) devs.elementAt(i);
+
+				Format[] formats = c.getFormats();
+
+				for (int j = 0; j < formats.length; j++)
+					if (formats[j] instanceof VideoFormat) {
+						devCount++;
+						break;
+					}
+			}
+			m_ok = devs != null && devCount > 0;
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see com.mondobeyondo.stopmojo.capture.CapturePlugin#selectCaptureDevice(java.lang.String, boolean)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.mondobeyondo.stopmojo.capture.CapturePlugin#selectCaptureDevice(java.
+	 * lang.String, boolean)
 	 */
-	public boolean selectCaptureDevice(JFrame parent, String dev, boolean showDialog) throws CapturePluginException 
-	{
-		boolean
-		  retval = false;
-		
+	public boolean selectCaptureDevice(JFrame parent, String dev, boolean showDialog) throws CapturePluginException {
+		boolean retval = false;
+
 		dispose();
-		
+
 		m_devName = dev;
 		m_parent = parent;
-		
-		if(showDialog)
-		{
-			try
-			{
-  	    CaptureDeviceDialog
-	        d = new CaptureDeviceDialog(m_parent, dev);
-	
-	      if(d.showModal())
-	    	  m_devName = d.getDevName();
-	      else
-	    	  m_devName = "";
-			}
-			catch (Exception e)
-			{
+
+		if (showDialog) {
+			try {
+				CaptureDeviceDialog d = new CaptureDeviceDialog(m_parent, dev);
+
+				if (d.showModal())
+					m_devName = d.getDevName();
+				else
+					m_devName = "";
+			} catch (Exception e) {
 				throw new CapturePluginException("Unable to select capture device!", e);
 			}
 		}
-		
-    if(!m_devName.trim().equals(""))
-    {
-    	Cursor oldCursor = m_parent.getCursor();
-    	m_parent.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-    	
-    	String
-			  devName = "";
-    	
-    	int
-			  formatIndex = -1;
-    	
-    	StringTokenizer
-			  st = new StringTokenizer(m_devName, CaptureDeviceDialog.DELIMITER);
-    	
-    	if(st.hasMoreTokens())
-    		devName = st.nextToken();
-    	if(st.hasMoreTokens())
-    		formatIndex = Util.atoi(st.nextToken());
-    	
-	    if(m_capDS != null)
-		    m_capDS.disconnect();
-	
-	    if(m_capMediaPlayer != null)
-	    {
-		    m_capMediaPlayer.close();
-	    }
-	    try
-			{
-	      retval = setCapDev(devName, formatIndex);
+
+		if (!m_devName.trim().equals("")) {
+			Cursor oldCursor = m_parent.getCursor();
+			m_parent.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+
+			String devName = "";
+
+			int formatIndex = -1;
+
+			StringTokenizer st = new StringTokenizer(m_devName, CaptureDeviceDialog.DELIMITER);
+
+			if (st.hasMoreTokens())
+				devName = st.nextToken();
+			if (st.hasMoreTokens())
+				formatIndex = Util.atoi(st.nextToken());
+
+			if (m_capDS != null)
+				m_capDS.disconnect();
+
+			if (m_capMediaPlayer != null) {
+				m_capMediaPlayer.close();
 			}
-	    catch(CapturePluginException e1)
-			{
-	      m_parent.setCursor(oldCursor);
-			  throw e1;
+			try {
+				retval = setCapDev(devName, formatIndex);
+			} catch (CapturePluginException e1) {
+				m_parent.setCursor(oldCursor);
+				throw e1;
+			} catch (Exception e2) {
+				m_parent.setCursor(oldCursor);
+				throw new CapturePluginException("Unable to set capture device!", e2);
 			}
-	    catch(Exception e2)
-			{
-	      m_parent.setCursor(oldCursor);
-			  throw new CapturePluginException("Unable to set capture device!", e2);
-			}
-      
-      m_parent.setCursor(oldCursor);
-    }
+
+			m_parent.setCursor(oldCursor);
+		}
 		return retval;
 	}
-	
-	/* (non-Javadoc)
-	 * @see com.mondobeyondo.stopmojo.capture.CapturePlugin#getCaptureDeviceName()
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.mondobeyondo.stopmojo.capture.CapturePlugin#getCaptureDeviceName()
 	 */
-	public String getCaptureDeviceName()
-	{
+	public String getCaptureDeviceName() {
 		return m_devName;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.mondobeyondo.stopmojo.capture.CapturePlugin#startCapture()
 	 */
-	public void startCapture() throws CapturePluginException
-	{
-		if(m_capMediaPlayer != null && m_capMediaPlayer.getState() == Processor.Prefetched)
-		{
-	    m_capMediaPlayer.start();
-  	  if(!waitForState(m_capMediaPlayer, Processor.Started)) 
-  	  {
-  		  throw new CapturePluginException("Unable to start player!");
-  	  }
-		}
-		else
+	public void startCapture() throws CapturePluginException {
+		if (m_capMediaPlayer != null && m_capMediaPlayer.getState() == Processor.Prefetched) {
+			m_capMediaPlayer.start();
+			if (!waitForState(m_capMediaPlayer, Processor.Started)) {
+				throw new CapturePluginException("Unable to start player!");
+			}
+		} else
 			throw new CapturePluginException("Player in invalid state!");
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.mondobeyondo.stopmojo.capture.CapturePlugin#stopCapture()
 	 */
-	public void stopCapture() throws CapturePluginException 
-	{
-		if(m_capMediaPlayer != null /*&& m_capMediaPlayer.getState() == Processor.Started*/)
-		{
-	    m_capMediaPlayer.stop();
-		}
-		else
+	public void stopCapture() throws CapturePluginException {
+		if (m_capMediaPlayer != null /*
+										 * && m_capMediaPlayer.getState() ==
+										 * Processor.Started
+										 */) {
+			m_capMediaPlayer.stop();
+		} else
 			throw new CapturePluginException("Player in invalid state!");
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.mondobeyondo.stopmojo.capture.CapturePlugin#grabImage()
 	 */
-	public BufferedImage grabPreviewImage() throws CapturePluginException
-	{
+	public BufferedImage grabPreviewImage() throws CapturePluginException {
 		return grabImage();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.mondobeyondo.stopmojo.capture.CapturePlugin#grabImage()
 	 */
-	public BufferedImage grabImage() throws CapturePluginException
-	{
-    Buffer          
-  	  bufferFrame;
+	public BufferedImage grabImage() throws CapturePluginException {
+		Buffer bufferFrame;
 
-    BufferToImage   
-      bufferToImage;
+		BufferToImage bufferToImage;
 
-    BufferedImage           
-      image = null;
+		BufferedImage image = null;
 
-    bufferFrame = m_grabber.grabFrame();
-    bufferToImage = new BufferToImage ((VideoFormat)bufferFrame.getFormat());
-    image = (BufferedImage)bufferToImage.createImage ( bufferFrame );
-    return image;
+		bufferFrame = m_grabber.grabFrame();
+		bufferToImage = new BufferToImage((VideoFormat) bufferFrame.getFormat());
+		image = (BufferedImage) bufferToImage.createImage(bufferFrame);
+		return image;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.mondobeyondo.stopmojo.util.Plugin#getID()
 	 */
-	public String getID() 
-	{
+	public String getID() {
 		return ID;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.mondobeyondo.stopmojo.util.Plugin#getDesc()
 	 */
-	public String getDesc() 
-	{
+	public String getDesc() {
 		return DESC;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.mondobeyondo.stopmojo.util.Plugin#getVendor()
 	 */
-	public String getVendor() 
-	{
+	public String getVendor() {
 		return VENDOR;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.mondobeyondo.stopmojo.util.Plugin#getVersion()
 	 */
-	public String getVersion() 
-	{
+	public String getVersion() {
 		return VERSION;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.mondobeyondo.stopmojo.util.Plugin#isOk()
 	 */
-	public boolean isOk() 
-	{
+	public boolean isOk() {
 		return m_ok;
 	}
-  
-  private boolean setCapDev(String devName, int format) throws Exception
-  {
-  	dispose();
-    
-  	m_capDS = createCaptureDataSource(devName, format);
-   	try 
-		{
-   		m_capDS.connect();
-    }
-    catch(java.io.IOException ioe) 
-	  {
-     	ioe.printStackTrace();
-     	m_capDS = null;
-    }
-    catch(Exception e)
-		{
-    	e.printStackTrace();
-    	m_capDS = null;
+
+	private boolean setCapDev(String devName, int format) throws Exception {
+		dispose();
+
+		m_capDS = createCaptureDataSource(devName, format);
+		try {
+			m_capDS.connect();
+		} catch (java.io.IOException ioe) {
+			ioe.printStackTrace();
+			m_capDS = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			m_capDS = null;
 		}
-    if(m_capDS != null)
-    {
-  	  m_capMediaPlayer = createMediaPlayer(m_capDS);
-  	  if(m_capMediaPlayer != null)
-  	  {
-  	    m_capMediaPlayer.addControllerListener(this);
-//  	    m_capMediaPlayer.setControlPanelVisible(true);
-  	    m_capMediaPlayer.realize();
-  	  	if(!waitForState(m_capMediaPlayer, Processor.Configured)) 
-  	  	{
-  	  		throw new CapturePluginException("Unable to configure player!");
-  	  	}
-  		  m_capMediaPlayer.prefetch();
-  	  	if(!waitForState(m_capMediaPlayer, Processor.Prefetched)) 
-  	  	{
-  	  		throw new CapturePluginException("Unable to prefetch player!");
-  	  	}
-  		  m_grabber = (FrameGrabbingControl) m_capMediaPlayer.getControl("javax.media.control.FrameGrabbingControl");
-  	  	return true;
-  	  }
-    }
-    return false;
-  }
-  
-  public DataSource createCaptureDataSource(String devName, int formatIndex)
-  {
-    MediaLocator        
-		  deviceURL;
-    
-    CaptureDeviceInfo   
-		  cdi;
-    
-    DataSource          
-		  ds = null;
-    
-    Format
-		  format,
-		  formats[];
-    
-    FormatControl       
-		  formatControls[];
-    
-    cdi = CaptureDeviceManager.getDevice(devName);
-    format = cdi.getFormats()[formatIndex];
-    
-    if(cdi != null)
-    {
-      deviceURL = cdi.getLocator();
-      try 
-			{
-        ds = javax.media.Manager.createDataSource(deviceURL);
-      } 
-      catch (NoDataSourceException ndse) 
-			{
-      	ndse.printStackTrace();
-        return null;
-      } 
-      catch (java.io.IOException ioe) 
-			{
-      	ioe.printStackTrace();
-        return null;
-      }
-    }
-    if(!(ds instanceof CaptureDevice))
-    {
-    	JOptionPane.showMessageDialog(m_parent, devName + " is not a capture device!", "Error", JOptionPane.ERROR_MESSAGE);
-    	ds = null;
-    }
-    if(ds != null && format != null)
-    {
-      formatControls = ((CaptureDevice)ds).getFormatControls();
-      for(int i = 0; i < formatControls.length; i++)
-      {
-      	formats = formatControls[i].getSupportedFormats();
-      	for(int j = 0; j < formats.length; j++)
-      		if(formats[j].matches(format))
-          {
-          	formatControls[i].setFormat(format);
-          	break;
-          }
-      }
-    }
-    return new CDSWrapper((PushBufferDataSource)ds);
-  }
-
-  private MediaPlayer createMediaPlayer(DataSource dataSource) 
-  {
-    MediaPlayer     
-		  mediaPlayer = null;
-
-    if(dataSource == null) 
-    {
-    	JOptionPane.showMessageDialog(m_parent, "Datasource is null: " + dataSource, "Error", JOptionPane.ERROR_MESSAGE);
-      return(null);
-    }
-
-    mediaPlayer = new MediaPlayer();
-    mediaPlayer.setDataSource(dataSource);
-    if(mediaPlayer.getPlayer() == null) 
-    {
-    	JOptionPane.showMessageDialog(m_parent, "Unable to create MediaPlayer for: " + dataSource, "Error", JOptionPane.ERROR_MESSAGE);
-      return(null);
-    }
-
-    return(mediaPlayer);
-  }
-  
-  private void setMediaPlayer(MediaPlayer player)
-  {
-  	m_capMediaPlayer = player;
-	  m_grabber = (FrameGrabbingControl) m_capMediaPlayer.getControl("javax.media.control.FrameGrabbingControl");
-	  
-	  Control[] controls = player.getControls();
-  }
-
-  /**
-   * Block until the processor has transitioned to the given state.
-   * Return false if the transition failed.
-   */
-  boolean waitForState(Player p, int state) 
-  {
-    synchronized(m_waitSync) 
-		{
-      try 
-			{
-	      while(p.getState() < state && m_stateTransitionOK)
-	        m_waitSync.wait();
-      } catch (Exception e) {}
-    }
-    return m_stateTransitionOK;
-  }
-
-  public void controllerUpdate(ControllerEvent evt) 
-  {
-    if(evt instanceof ConfigureCompleteEvent ||
-       evt instanceof RealizeCompleteEvent ||
-       evt instanceof PrefetchCompleteEvent || 
-       evt instanceof StartEvent) 
-    {
-      synchronized(m_waitSync) 
-			{
-	      m_stateTransitionOK = true;
-	      m_waitSync.notifyAll();
-      }
-    } 
-    else if(evt instanceof ResourceUnavailableEvent) 
-    {
-      synchronized(m_waitSync) 
-		  {
-	      m_stateTransitionOK = false;
-	      m_waitSync.notifyAll();
-      }
-    } 
-    else if(evt instanceof EndOfMediaEvent) 
-    {
-      evt.getSourceController().stop();
-      evt.getSourceController().close();
-    }
-  }
-  
-  public void dispose()
-  {
-		if(m_capDS != null)
-		{
-			try
-			{
-		    m_capDS.stop();
+		if (m_capDS != null) {
+			m_capMediaPlayer = createMediaPlayer(m_capDS);
+			if (m_capMediaPlayer != null) {
+				m_capMediaPlayer.addControllerListener(this);
+				// m_capMediaPlayer.setControlPanelVisible(true);
+				m_capMediaPlayer.realize();
+				if (!waitForState(m_capMediaPlayer, Processor.Configured)) {
+					throw new CapturePluginException("Unable to configure player!");
+				}
+				m_capMediaPlayer.prefetch();
+				if (!waitForState(m_capMediaPlayer, Processor.Prefetched)) {
+					throw new CapturePluginException("Unable to prefetch player!");
+				}
+				m_grabber = (FrameGrabbingControl) m_capMediaPlayer
+						.getControl("javax.media.control.FrameGrabbingControl");
+				return true;
 			}
-			catch(Exception e)
-			{
+		}
+		return false;
+	}
+
+	public DataSource createCaptureDataSource(String devName, int formatIndex) {
+		MediaLocator deviceURL;
+
+		CaptureDeviceInfo cdi;
+
+		DataSource ds = null;
+
+		Format format, formats[];
+
+		FormatControl formatControls[];
+
+		cdi = CaptureDeviceManager.getDevice(devName);
+		format = cdi.getFormats()[formatIndex];
+
+		if (cdi != null) {
+			deviceURL = cdi.getLocator();
+			try {
+				ds = javax.media.Manager.createDataSource(deviceURL);
+			} catch (NoDataSourceException ndse) {
+				ndse.printStackTrace();
+				return null;
+			} catch (java.io.IOException ioe) {
+				ioe.printStackTrace();
+				return null;
+			}
+		}
+		if (!(ds instanceof CaptureDevice)) {
+			JOptionPane.showMessageDialog(m_parent, devName + " is not a capture device!", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			ds = null;
+		}
+		if (ds != null && format != null) {
+			formatControls = ((CaptureDevice) ds).getFormatControls();
+			for (int i = 0; i < formatControls.length; i++) {
+				formats = formatControls[i].getSupportedFormats();
+				for (int j = 0; j < formats.length; j++)
+					if (formats[j].matches(format)) {
+						formatControls[i].setFormat(format);
+						break;
+					}
+			}
+		}
+		return new CDSWrapper((PushBufferDataSource) ds);
+	}
+
+	private MediaPlayer createMediaPlayer(DataSource dataSource) {
+		MediaPlayer mediaPlayer = null;
+
+		if (dataSource == null) {
+			JOptionPane.showMessageDialog(m_parent, "Datasource is null: " + dataSource, "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return (null);
+		}
+
+		mediaPlayer = new MediaPlayer();
+		mediaPlayer.setDataSource(dataSource);
+		if (mediaPlayer.getPlayer() == null) {
+			JOptionPane.showMessageDialog(m_parent, "Unable to create MediaPlayer for: " + dataSource, "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return (null);
+		}
+
+		return (mediaPlayer);
+	}
+
+	private void setMediaPlayer(MediaPlayer player) {
+		m_capMediaPlayer = player;
+		m_grabber = (FrameGrabbingControl) m_capMediaPlayer.getControl("javax.media.control.FrameGrabbingControl");
+
+		Control[] controls = player.getControls();
+	}
+
+	/**
+	 * Block until the processor has transitioned to the given state. Return
+	 * false if the transition failed.
+	 */
+	boolean waitForState(Player p, int state) {
+		synchronized (m_waitSync) {
+			try {
+				while (p.getState() < state && m_stateTransitionOK)
+					m_waitSync.wait();
+			} catch (Exception e) {
+			}
+		}
+		return m_stateTransitionOK;
+	}
+
+	public void controllerUpdate(ControllerEvent evt) {
+		if (evt instanceof ConfigureCompleteEvent || evt instanceof RealizeCompleteEvent
+				|| evt instanceof PrefetchCompleteEvent || evt instanceof StartEvent) {
+			synchronized (m_waitSync) {
+				m_stateTransitionOK = true;
+				m_waitSync.notifyAll();
+			}
+		} else if (evt instanceof ResourceUnavailableEvent) {
+			synchronized (m_waitSync) {
+				m_stateTransitionOK = false;
+				m_waitSync.notifyAll();
+			}
+		} else if (evt instanceof EndOfMediaEvent) {
+			evt.getSourceController().stop();
+			evt.getSourceController().close();
+		}
+	}
+
+	public void dispose() {
+		if (m_capDS != null) {
+			try {
+				m_capDS.stop();
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
-  		m_capDS.disconnect();
-  		m_capDS = null;
+			m_capDS.disconnect();
+			m_capDS = null;
 		}
-		
-		if(m_capMediaPlayer != null)
-		{
+
+		if (m_capMediaPlayer != null) {
 			m_capMediaPlayer.stop();
 			m_capMediaPlayer.close();
 			m_capMediaPlayer = null;
 		}
 		m_grabber = null;
-  }
+	}
 }

@@ -62,59 +62,44 @@ import com.mondobeyondo.stopmojo.util.Project;
 /**
  * @author Derry Bryson
  *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ *         To change the template for this generated type comment go to
+ *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class PreviewDialog extends BasicDialog implements ChangeListener 
-{
-	private Project
-	  m_prj;
-	
-	private Timer
-	  m_timer;
-	
-	private int
-	  m_curFrame,
-		m_numFrames,
-		m_delay;
-	
-	private boolean
-	  m_playing;
-	
-	private ImagePanel
-	  m_imagePanel;
-	
-	private JSlider
-	  m_posSlider;
-	
-	private JButton
-		m_stopButton,
-		m_beginButton;
-  
-	private JToggleButton
-	  m_playButton;
-	
-  public PreviewDialog(JFrame frame, Project prj, String title)
-  {
-  	super(frame, true);
-  	m_prj = prj;
-  	m_curFrame = 0;
-  	m_numFrames = m_prj.getNumFrames();
-  	m_playing = true;
-  	
-	  setTitle(title);
-	  
-		//setIconImage(EmailApp.s_iconImage);
-		addWindowListener(new java.awt.event.WindowAdapter()
-		{
-			public void windowClosing(java.awt.event.WindowEvent evt)
-			{
+public class PreviewDialog extends BasicDialog implements ChangeListener {
+	private Project m_prj;
+
+	private Timer m_timer;
+
+	private int m_curFrame, m_numFrames, m_delay;
+
+	private boolean m_playing;
+
+	private ImagePanel m_imagePanel;
+
+	private JSlider m_posSlider;
+
+	private JButton m_stopButton, m_beginButton;
+
+	private JToggleButton m_playButton;
+
+	public PreviewDialog(JFrame frame, Project prj, String title) {
+		super(frame, true);
+		m_prj = prj;
+		m_curFrame = 0;
+		m_numFrames = m_prj.getNumFrames();
+		m_playing = true;
+
+		setTitle(title);
+
+		// setIconImage(EmailApp.s_iconImage);
+		addWindowListener(new java.awt.event.WindowAdapter() {
+			public void windowClosing(java.awt.event.WindowEvent evt) {
 				onClose(evt);
 			}
 		});
-		
+
 		setBackground(Color.BLACK);
-		
+
 		JPanel p = new JPanel();
 		p.setLayout(new BorderLayout());
 		p.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -123,155 +108,126 @@ public class PreviewDialog extends BasicDialog implements ChangeListener
 		m_imagePanel.setBackground(Color.BLACK);
 		getContentPane().add(p, BorderLayout.CENTER);
 		getContentPane().add(makeControlPanel(), BorderLayout.SOUTH);
-		
+
 		setSize(500, 500);
 		restoreSizeAndPosition();
-		
+
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		
-		m_delay = (int)(1000.0 / m_prj.getFps() + 0.5);
-//		setTimer(m_delay);
+
+		m_delay = (int) (1000.0 / m_prj.getFps() + 0.5);
+		// setTimer(m_delay);
 		setImage(m_curFrame);
 	}
-  
-  private JPanel makeControlPanel()
-  {
-  	JPanel
-		  panel,
-		  sliderPanel,
-			butPanel;
-  	
-  	panel = new JPanel();
-  	panel.setLayout(new BorderLayout());
-  	
-  	sliderPanel = new JPanel();
-  	sliderPanel.setLayout(new BorderLayout());
-//		sliderPanel.setBackground(Color.BLACK);
-  	sliderPanel.add(m_posSlider = new JSlider(JSlider.HORIZONTAL, 0, m_numFrames - 1, 0), BorderLayout.CENTER);
-  	m_posSlider.addChangeListener(this);
-//  	m_posSlider.setMajorTickSpacing(10);
-//  	m_posSlider.setPaintTicks(true);
-  	m_posSlider.setPaintTrack(true);
-  	
-  	butPanel = new JPanel();
-  	butPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-//		butPanel.setBackground(Color.BLACK);
-  	m_playButton = new JToggleButton(Capture.s_playIcon, false);
-//  	m_playButton.setPressedIcon(Capture.s_pauseIcon);
-		m_playButton.addActionListener(new java.awt.event.ActionListener()
-		{
-			public void actionPerformed(java.awt.event.ActionEvent evt)
-			{
-//System.out.println("play pressed, selected = " + m_playButton.isSelected());				
-				if(!m_playButton.isSelected())
-				{
+
+	private JPanel makeControlPanel() {
+		JPanel panel, sliderPanel, butPanel;
+
+		panel = new JPanel();
+		panel.setLayout(new BorderLayout());
+
+		sliderPanel = new JPanel();
+		sliderPanel.setLayout(new BorderLayout());
+		// sliderPanel.setBackground(Color.BLACK);
+		sliderPanel.add(m_posSlider = new JSlider(JSlider.HORIZONTAL, 0, m_numFrames - 1, 0), BorderLayout.CENTER);
+		m_posSlider.addChangeListener(this);
+		// m_posSlider.setMajorTickSpacing(10);
+		// m_posSlider.setPaintTicks(true);
+		m_posSlider.setPaintTrack(true);
+
+		butPanel = new JPanel();
+		butPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+		// butPanel.setBackground(Color.BLACK);
+		m_playButton = new JToggleButton(Capture.s_playIcon, false);
+		// m_playButton.setPressedIcon(Capture.s_pauseIcon);
+		m_playButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				// System.out.println("play pressed, selected = " +
+				// m_playButton.isSelected());
+				if (!m_playButton.isSelected()) {
 					m_playButton.setIcon(Capture.s_playIcon);
 					stopTimer();
-				}
-				else
-				{
+				} else {
 					m_playButton.setIcon(Capture.s_pauseIcon);
 					setTimer(m_delay);
 				}
 			}
 		});
-  	butPanel.add(m_playButton);
-  	butPanel.add(m_beginButton = new JButton(Capture.s_beginIcon));
-		m_beginButton.addActionListener(new java.awt.event.ActionListener()
-		{
-			public void actionPerformed(java.awt.event.ActionEvent evt)
-			{
+		butPanel.add(m_playButton);
+		butPanel.add(m_beginButton = new JButton(Capture.s_beginIcon));
+		m_beginButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				m_curFrame = 0;
 				m_posSlider.setValue(0);
 				setImage(m_curFrame);
 			}
 		});
-  	butPanel.add(m_stopButton = new JButton(Capture.s_stopIcon));
-		m_stopButton.addActionListener(new java.awt.event.ActionListener()
-		{
-			public void actionPerformed(java.awt.event.ActionEvent evt)
-			{
+		butPanel.add(m_stopButton = new JButton(Capture.s_stopIcon));
+		m_stopButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				stopTimer();
 				m_playButton.setSelected(false);
 				m_playButton.setIcon(Capture.s_playIcon);
 			}
 		});
-		
+
 		panel.add(sliderPanel, BorderLayout.NORTH);
 		panel.add(butPanel, BorderLayout.SOUTH);
-		
+
 		return panel;
-  }
-  
-	private void onClose(java.awt.event.WindowEvent evt)
-	{
+	}
+
+	private void onClose(java.awt.event.WindowEvent evt) {
 		doFrameClose();
 	}
-	
-	private void doFrameClose()
-	{
+
+	private void doFrameClose() {
 		saveSizeAndPosition();
-		
+
 		dispose();
 	}
-	
-	public void setTimer(int delay)
-	{
-		if(m_timer != null)
-		{
-		  m_timer.stop();
-		  m_timer = null;
+
+	public void setTimer(int delay) {
+		if (m_timer != null) {
+			m_timer.stop();
+			m_timer = null;
 		}
 
-    if(delay > 0)
-    {
-//System.out.println("setting timout to " + delay + " minutes");    	
-      m_timer = new Timer(delay, new ActionListener() 
-      {
-		  	public void actionPerformed(ActionEvent evt) 
-			  {
-		  		doNextFrame();
-		  		if(m_timer != null)
-			      m_timer.restart();
-			  }
-		  });
-      m_timer.setRepeats(false);
-		  m_timer.start();
-    }
+		if (delay > 0) {
+			// System.out.println("setting timout to " + delay + " minutes");
+			m_timer = new Timer(delay, new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
+					doNextFrame();
+					if (m_timer != null)
+						m_timer.restart();
+				}
+			});
+			m_timer.setRepeats(false);
+			m_timer.start();
+		}
 	}
-	
-	private void stopTimer()
-	{
-		if(m_timer != null)
-		{
+
+	private void stopTimer() {
+		if (m_timer != null) {
 			m_timer.stop();
 			m_timer = null;
 		}
 	}
-	
-	private void setImage(int frameNum)
-	{
-		try
-		{
-		  m_imagePanel.setImage(0, m_prj.getFrame(frameNum + 1));
-		}
-		catch(Exception e)
-		{
+
+	private void setImage(int frameNum) {
+		try {
+			m_imagePanel.setImage(0, m_prj.getFrame(frameNum + 1));
+		} catch (Exception e) {
 			System.out.println("unable to read image " + frameNum);
 			e.printStackTrace();
 		}
 	}
 
-	private void doNextFrame()
-	{
-		if(m_curFrame < m_numFrames - 1)
-		{
+	private void doNextFrame() {
+		if (m_curFrame < m_numFrames - 1) {
 			m_posSlider.setValue(m_curFrame);
 			m_curFrame++;
 			setImage(m_curFrame);
-		}
-		else
-		{
+		} else {
 			m_curFrame = 0;
 			m_posSlider.setValue(0);
 			setImage(m_curFrame);
@@ -281,8 +237,7 @@ public class PreviewDialog extends BasicDialog implements ChangeListener
 		}
 	}
 
-	public void stateChanged(ChangeEvent e) 
-	{
+	public void stateChanged(ChangeEvent e) {
 		m_curFrame = m_posSlider.getValue();
 		setImage(m_curFrame);
 	}

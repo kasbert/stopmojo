@@ -50,36 +50,28 @@ import javax.swing.text.DocumentFilter;
 /**
  * @author Derry Bryson
  *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ *         To change the template for this generated type comment go to
+ *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class RTypeFormatter extends DefaultFormatter 
-{
-	private String
-	  m_rtype;
-	  
-	public RTypeFormatter(String rtype)
-	{
+public class RTypeFormatter extends DefaultFormatter {
+	private String m_rtype;
+
+	public RTypeFormatter(String rtype) {
 		m_rtype = rtype;
 	}
-	
-	public Object stringToValue(String string)
-											 throws ParseException
-  {
-  	return string;											 
-  }
-											 
-	public String valueToString(Object value)
-											 throws ParseException
-  {								
-  	if(value instanceof String)
-  	  return Util.RType_Format(m_rtype, (String)value).trim();
-  	 
-  	return "";			
-  }
-											 											 
-	protected DocumentFilter getDocumentFilter()
-	{
-		return new RTypeDocumentFilter(m_rtype);								 											 
+
+	public Object stringToValue(String string) throws ParseException {
+		return string;
+	}
+
+	public String valueToString(Object value) throws ParseException {
+		if (value instanceof String)
+			return Util.RType_Format(m_rtype, (String) value).trim();
+
+		return "";
+	}
+
+	protected DocumentFilter getDocumentFilter() {
+		return new RTypeDocumentFilter(m_rtype);
 	}
 }

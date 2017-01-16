@@ -48,46 +48,38 @@ import javax.swing.filechooser.FileFilter;
 /**
  * @author derry
  *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ *         To change the template for this generated type comment go to
+ *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class ExtensionFileFilter extends FileFilter implements FilenameFilter 
-{
-	String
-	  m_ext,
-		m_desc;
-	
-	public ExtensionFileFilter(String ext, String desc)
-	{
+public class ExtensionFileFilter extends FileFilter implements FilenameFilter {
+	String m_ext, m_desc;
+
+	public ExtensionFileFilter(String ext, String desc) {
 		m_ext = ext;
 		m_desc = desc;
 	}
-	
-	public boolean accept(File f) 
-	{
-		if(f.isDirectory() || m_ext.compareToIgnoreCase(getExtension(f)) == 0)
+
+	public boolean accept(File f) {
+		if (f.isDirectory() || m_ext.compareToIgnoreCase(getExtension(f)) == 0)
 			return true;
 		return false;
 	}
 
-  private String getExtension(File f) 
-  {
-    String ext = "";
-    String s = f.getName();
-    int i = s.lastIndexOf('.');
+	private String getExtension(File f) {
+		String ext = "";
+		String s = f.getName();
+		int i = s.lastIndexOf('.');
 
-    if(i > 0 &&  i < s.length() - 1) 
-      ext = s.substring(i+1).toLowerCase();
-    return ext;
-  }
+		if (i > 0 && i < s.length() - 1)
+			ext = s.substring(i + 1).toLowerCase();
+		return ext;
+	}
 
-  public String getDescription() 
-  {
-  	return m_desc;
-  }
+	public String getDescription() {
+		return m_desc;
+	}
 
-  public boolean accept(File dir, String name) 
-  {
-  	return accept(new File(dir, name));
-  }
+	public boolean accept(File dir, String name) {
+		return accept(new File(dir, name));
+	}
 }
