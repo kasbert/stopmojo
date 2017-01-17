@@ -44,16 +44,19 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
 
-import com.mondobeyondo.stopmojo.plugin.Plugin;
-
 /**
  * @author derry
  *
  *         To change the template for this generated type comment go to
  *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public interface CapturePlugin extends Plugin {
-	public boolean selectCaptureDevice(JFrame parent, String devName, boolean showDialog) throws CapturePluginException;
+public interface CapturePlugin  {
+
+  public boolean isOk();
+
+  public void dispose();
+
+  public boolean selectCaptureDevice(JFrame parent, String devName, boolean showDialog) throws CapturePluginException;
 
 	public String getCaptureDeviceName();
 

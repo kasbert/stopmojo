@@ -98,8 +98,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import com.mondobeyondo.stopmojo.plugin.Plugin;
-import com.mondobeyondo.stopmojo.plugin.PluginManager;
+import com.mondobeyondo.stopmojo.capture.WebcamCapturePlugin.WebcamCapturePlugin;
 import com.mondobeyondo.stopmojo.plugin.capture.CapturePlugin;
 import com.mondobeyondo.stopmojo.util.CDSWrapper;
 import com.mondobeyondo.stopmojo.util.FieldPanel;
@@ -117,7 +116,7 @@ import com.mondobeyondo.stopmojo.util.SwingWorker;
  */
 public class CaptureFrame extends JFrame implements ChangeListener {
 	private static final String PREF_VDIVLOC = "VDivLoc", PREF_HDIVLOC = "HDivLoc", PREF_CAPDEVNAME = "CapDevName",
-			PREF_CAPFORMAT = "CapFormat", PREF_CAPPLUGINID = "CapPluginID", PREF_GRIDON = "GridOn",
+			PREF_CAPFORMAT = "CapFormat", PREF_GRIDON = "GridOn",
 			PREF_GRIDNUMH = "GridNumH", PREF_GRIDNUMV = "GridNumV";
 
 	private static final int FRAME_TIMEOUT = 250;
@@ -149,30 +148,12 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 
 	private boolean m_capturing = false;
 
-	private PluginManager m_pluginManager;
-
-	private Vector m_capturePlugins;
+	private CapturePlugin m_capturePlugin;
 
 	private CapturePlugin m_curCapturePlugin = null;
 
 	public CaptureFrame(String prjFileName) {
-		try {
-			m_pluginManager = new PluginManager();
-			m_pluginManager.LoadPlugins("plugins");
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
-		Vector plugins = m_pluginManager.getPlugins();
-		for (int i = 0; i < plugins.size(); i++)
-			System.out.println("Plugin " + i + ": " + ((Plugin) plugins.elementAt(i)).getDesc());
-		try {
-			m_capturePlugins = m_pluginManager
-					.getPlugins(Class.forName("com.mondobeyondo.stopmojo.plugin.capture.CapturePlugin"));
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
+	  m_capturePlugin = new WebcamCapturePlugin();
 
 		m_pref = Preferences.userNodeForPackage(this.getClass());
 
@@ -215,8 +196,8 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 
 		updateUI();
 
-		if (!m_pref.get(PREF_CAPPLUGINID, "").equals("") && !m_pref.get(PREF_CAPDEVNAME, "").equals(""))
-			setCapDev(m_pref.get(PREF_CAPPLUGINID, ""), m_pref.get(PREF_CAPDEVNAME, ""));
+		if (!m_pref.get(PREF_CAPDEVNAME, "").equals(""))
+			setCapDev(m_pref.get(PREF_CAPDEVNAME, ""));
 
 		if (prjFileName != null)
 			doFileOpen(prjFileName);
@@ -679,28 +660,21 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 		menu.addSeparator();
 
 		class setCapAction implements java.awt.event.ActionListener {
-			int m_index;
-
-			public setCapAction(int index) {
-				m_index = index;
-			}
-
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				onFileSelCapDev(m_index);
+				onFileSelCapDev();
 			}
 		}
 		;
 
 		menu1 = new JMenu("Select/Configure Capture Device");
 		menu1.setMnemonic(KeyEvent.VK_F);
-		for (int i = 0; i < m_capturePlugins.size(); i++) {
-			CapturePlugin p = (CapturePlugin) m_capturePlugins.elementAt(i);
+			CapturePlugin p = m_capturePlugin;
 
-			menuItem = new JMenuItem(p.getDesc() + " Devices");
-			menuItem.addActionListener(new setCapAction(i));
+			menuItem = new JMenuItem("Devices");
+			menuItem.addActionListener(new setCapAction());
 			menuItem.setEnabled(p.isOk());
 			menu1.add(menuItem);
-		}
+			
 		menu.add(menu1);
 		menu.addSeparator();
 
@@ -820,7 +794,7 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 			m_timer = null;
 		}
 
-		m_pluginManager.disposeAll();
+		m_capturePlugin.dispose();
 		FramePosSizeHandler.saveSizeAndPosition(this);
 
 		dispose();
@@ -948,26 +922,17 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 		updateUI();
 	}
 
-	private void setCapDev(String pluginID, String devName) {
-		if (m_capturePlugins != null) {
-			Cursor oldCursor = getCursor();
-			setCursor(new Cursor(Cursor.WAIT_CURSOR));
-
-			for (int i = 0; i < m_capturePlugins.size(); i++) {
-				CapturePlugin cp = (CapturePlugin) m_capturePlugins.elementAt(i);
-
-				if (cp.getID().equals(pluginID)) {
-					try {
-						if (cp.selectCaptureDevice(this, devName, false))
-							setCapturePlugin(cp);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}
-
-			setCursor(oldCursor);
+	private void setCapDev(String devName) {
+		Cursor oldCursor = getCursor();
+		setCursor(new Cursor(Cursor.WAIT_CURSOR));
+		CapturePlugin cp = m_capturePlugin;
+		try {
+			if (cp.selectCaptureDevice(this, devName, false))
+				setCapturePlugin(cp);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+		setCursor(oldCursor);
 	}
 
 	private void setCapturePlugin(CapturePlugin p) {
@@ -1001,15 +966,14 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 			updateUI();
 			System.out.println("selected device: " + p.getCaptureDeviceName());
 			m_pref.put(PREF_CAPDEVNAME, p.getCaptureDeviceName());
-			m_pref.put(PREF_CAPPLUGINID, p.getID());
 		} else
 			m_compImagePanel.setImage(0, null);
 
 		setCursor(oldCursor);
 	}
 
-	private void onFileSelCapDev(int index) {
-		CapturePlugin cp = (CapturePlugin) m_capturePlugins.elementAt(index);
+	private void onFileSelCapDev() {
+		CapturePlugin cp = m_capturePlugin;
 
 		if (m_timer != null) {
 			m_timer.stop();
