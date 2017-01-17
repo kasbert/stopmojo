@@ -38,7 +38,7 @@
  * whether to permit this exception to apply to your modifications. If you do 
  * not wish that, delete this exception notice.  
  */
-package com.mondobeyondo.stopmojo.plugin.capture;
+package com.mondobeyondo.stopmojo.webcam;
 
 /**
  * @author derry

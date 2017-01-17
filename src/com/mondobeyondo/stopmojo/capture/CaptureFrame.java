@@ -98,8 +98,6 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import com.mondobeyondo.stopmojo.capture.WebcamCapturePlugin.WebcamCapturePlugin;
-import com.mondobeyondo.stopmojo.plugin.capture.CapturePlugin;
 import com.mondobeyondo.stopmojo.util.CDSWrapper;
 import com.mondobeyondo.stopmojo.util.FieldPanel;
 import com.mondobeyondo.stopmojo.util.FramePosSizeHandler;
@@ -107,6 +105,8 @@ import com.mondobeyondo.stopmojo.util.ImageDataSource;
 import com.mondobeyondo.stopmojo.util.Project;
 import com.mondobeyondo.stopmojo.util.ProjectFrameSource;
 import com.mondobeyondo.stopmojo.util.SwingWorker;
+import com.mondobeyondo.stopmojo.webcam.CapturePlugin;
+import com.mondobeyondo.stopmojo.webcam.WebcamCapturePlugin;
 
 /**
  * @author Derry Bryson

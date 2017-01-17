@@ -5,7 +5,6 @@
 	<classpathentry kind="lib" path="lib/bridj-0.6.2.jar"/>
 	<classpathentry kind="lib" path="lib/jmf.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-api-1.7.2.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/webcam"/>
 	<classpathentry kind="lib" path="lib/webcam-capture-0.3.10.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
