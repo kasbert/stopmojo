@@ -108,8 +108,8 @@ import com.mondobeyondo.stopmojo.util.SwingWorker;
  */
 public class CaptureFrame extends JFrame implements ChangeListener {
 	private static final String PREF_VDIVLOC = "VDivLoc", PREF_HDIVLOC = "HDivLoc", PREF_CAPDEVNAME = "CapDevName",
-	    PREF_CAPRESOLUTION = "CapResolution", PREF_CAPFORMAT = "CapFormat", PREF_MIRRORON = "MirrorOn",
-	    PREF_GRIDON = "GridOn", PREF_GRIDNUMH = "GridNumH", PREF_GRIDNUMV = "GridNumV";
+			PREF_CAPRESOLUTION = "CapResolution", PREF_CAPFORMAT = "CapFormat", PREF_MIRRORON = "MirrorOn",
+			PREF_GRIDON = "GridOn", PREF_GRIDNUMH = "GridNumH", PREF_GRIDNUMV = "GridNumV";
 
 	private static final int FRAME_TIMEOUT = 250;
 
@@ -149,7 +149,7 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 
 	public CaptureFrame(String prjFileName) {
 
-	  m_pref = Preferences.userNodeForPackage(this.getClass());
+		m_pref = Preferences.userNodeForPackage(this.getClass());
 
 		setTitle("");
 		setIconImage(Capture.s_stopmojoImage);
@@ -189,21 +189,20 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 
 		updateUI();
-		
+
 		try {
-		  InputStream is = this.getClass().getClassLoader().getResourceAsStream("sounds/shutter1.wav");
-		  BufferedInputStream bis = new BufferedInputStream(is);
-		  ByteArrayOutputStream buf = new ByteArrayOutputStream();
-		  int result = bis.read();
-		  while(result != -1) {
-		      buf.write((byte) result);
-		      result = bis.read();
-		  }
-		  m_sound = buf.toByteArray();
+			InputStream is = this.getClass().getClassLoader().getResourceAsStream("sounds/shutter1.wav");
+			BufferedInputStream bis = new BufferedInputStream(is);
+			ByteArrayOutputStream buf = new ByteArrayOutputStream();
+			int result = bis.read();
+			while (result != -1) {
+				buf.write((byte) result);
+				result = bis.read();
+			}
+			m_sound = buf.toByteArray();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 
 		if (!m_pref.get(PREF_CAPDEVNAME, "").equals(""))
 			setCapDev(m_pref.get(PREF_CAPDEVNAME, ""), m_pref.get(PREF_CAPRESOLUTION, ""));
@@ -684,44 +683,47 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 
 		menu.addSeparator();
 
-    class setCapAction implements java.awt.event.ActionListener {
-      Webcam webcam;
-      WebcamResolution resolution;
-      public setCapAction(Webcam webcam, WebcamResolution resolution) {
-        this.webcam = webcam;
-        this.resolution = resolution;
-      }
+		class setCapAction implements java.awt.event.ActionListener {
+			Webcam webcam;
+			WebcamResolution resolution;
 
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
-        onFileSelCapDev(webcam, resolution);
-      }
-    }
-    ;
+			public setCapAction(Webcam webcam, WebcamResolution resolution) {
+				this.webcam = webcam;
+				this.resolution = resolution;
+			}
+
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				onFileSelCapDev(webcam, resolution);
+			}
+		}
+		;
 		menu1 = new JMenu("Select Capture Device");
 		menu1.setMnemonic(KeyEvent.VK_F);
 
 		for (Webcam webcam : Webcam.getWebcams()) {
-  		menuItem = new JMenu(webcam.getName());
-  		menuItem.setEnabled(true); // TODO isOK
-      for (WebcamResolution resolution : WebcamResolution.values()) {
-        boolean ok = isOkForWebcam(webcam, resolution);
-        if (ok) {
-	        JMenuItem menuItem2 = new JMenuItem(resolution.name() + " : " + resolution.getSize().width +"x"+resolution.getSize().height );
-	        menuItem2.addActionListener(new setCapAction(webcam, resolution));
-	        menuItem2.setEnabled(true);
-	        menuItem.add(menuItem2);
-        } else {
-    		JMenu menu2 = new JMenu(resolution.name() + " : " + resolution.getSize().width +"x"+resolution.getSize().height );
-	        JMenuItem menuItem2 = new JMenuItem("Use unsupported resolution");
-	        menuItem2.addActionListener(new setCapAction(webcam, resolution));
-	        menuItem2.setEnabled(true);// TODO isOK
-	        menu2.add(menuItem2);
-	        menuItem.add(menu2);
-        }
-      }
-      menu1.add(menuItem);
+			menuItem = new JMenu(webcam.getName());
+			menuItem.setEnabled(true); // TODO isOK
+			for (WebcamResolution resolution : WebcamResolution.values()) {
+				boolean ok = isOkForWebcam(webcam, resolution);
+				if (ok) {
+					JMenuItem menuItem2 = new JMenuItem(
+							resolution.name() + " : " + resolution.getSize().width + "x" + resolution.getSize().height);
+					menuItem2.addActionListener(new setCapAction(webcam, resolution));
+					menuItem2.setEnabled(true);
+					menuItem.add(menuItem2);
+				} else {
+					JMenu menu2 = new JMenu(
+							resolution.name() + " : " + resolution.getSize().width + "x" + resolution.getSize().height);
+					JMenuItem menuItem2 = new JMenuItem("Use unsupported resolution");
+					menuItem2.addActionListener(new setCapAction(webcam, resolution));
+					menuItem2.setEnabled(true);// TODO isOK
+					menu2.add(menuItem2);
+					menuItem.add(menu2);
+				}
+			}
+			menu1.add(menuItem);
 		}
-			
+
 		menu.add(menu1);
 		menu.addSeparator();
 
@@ -738,14 +740,14 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 	}
 
 	private boolean isOkForWebcam(Webcam cdi, WebcamResolution resolution) {
-	    for (Dimension d : cdi.getViewSizes()) {
-	      if (d.width == resolution.getSize().width && d.height == resolution.getSize().height) {
-	        return true;
-	      }
-	    }
-	    return false;
-	  }
-		
+		for (Dimension d : cdi.getViewSizes()) {
+			if (d.width == resolution.getSize().width && d.height == resolution.getSize().height) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private JMenu makeProjectMenu() {
 		JMenu menu;
 
@@ -851,8 +853,8 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 		}
 
 		if (m_webcam != null) {
-		  m_webcam.close();
-		  m_webcam = null;
+			m_webcam.close();
+			m_webcam = null;
 		}
 		FramePosSizeHandler.saveSizeAndPosition(this);
 
@@ -986,22 +988,22 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 		setCursor(new Cursor(Cursor.WAIT_CURSOR));
 
 		WebcamResolution resolution = null;
-    for (WebcamResolution r : WebcamResolution.values()) {
-      if (r.name().equalsIgnoreCase(resName)) {
-        resolution = r;
-        break;
-      }
-    }
-    List<Webcam> webcams = Webcam.getWebcams();
-    for (Webcam webcam : webcams) {
-      if (devName.equalsIgnoreCase(webcam.getName())) {
-        try {
-          setCapturePlugin(webcam, resolution);
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
-      }
-    }
+		for (WebcamResolution r : WebcamResolution.values()) {
+			if (r.name().equalsIgnoreCase(resName)) {
+				resolution = r;
+				break;
+			}
+		}
+		List<Webcam> webcams = Webcam.getWebcams();
+		for (Webcam webcam : webcams) {
+			if (devName.equalsIgnoreCase(webcam.getName())) {
+				try {
+					setCapturePlugin(webcam, resolution);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
 		setCursor(oldCursor);
 	}
 
@@ -1015,7 +1017,7 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 			m_timer.stop();
 		if (m_webcam != null) {
 			try {
-			  m_webcam.close();
+				m_webcam.close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -1024,19 +1026,17 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 		m_webcam = null;
 
 		if (webcam != null) {
-		  if (resolution != null) {
-			  if (!isOkForWebcam(webcam, resolution)) {
-				  // force resolution
-				  Dimension[] sizes = new Dimension [] {
-						  resolution.getSize()
-				  };
-				webcam.setCustomViewSizes(sizes);
-			  }
-        webcam.setViewSize(resolution.getSize());
-	      m_pref.put(PREF_CAPRESOLUTION, resolution.name());
-		  }
+			if (resolution != null) {
+				if (!isOkForWebcam(webcam, resolution)) {
+					// force resolution
+					Dimension[] sizes = new Dimension[] { resolution.getSize() };
+					webcam.setCustomViewSizes(sizes);
+				}
+				webcam.setViewSize(resolution.getSize());
+				m_pref.put(PREF_CAPRESOLUTION, resolution.name());
+			}
 			try {
-			  webcam.open();
+				webcam.open();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -1060,7 +1060,7 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 		setCapturePlugin(null, null);
 
 		try {
-	    setCapturePlugin(webcam, resolution);
+			setCapturePlugin(webcam, resolution);
 		} catch (Exception e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -1137,15 +1137,15 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 	}
 
 	private void playSound() {
-	  try {
-		  ByteArrayInputStream bais = new ByteArrayInputStream(m_sound);
-		  AudioInputStream audioIn = AudioSystem.getAudioInputStream(bais);
-	      Clip clip = AudioSystem.getClip();
-	      clip.open(audioIn);
-	      clip.start();
-	   } catch (Exception e) {
-	      e.printStackTrace();
-	   }
+		try {
+			ByteArrayInputStream bais = new ByteArrayInputStream(m_sound);
+			AudioInputStream audioIn = AudioSystem.getAudioInputStream(bais);
+			Clip clip = AudioSystem.getClip();
+			clip.open(audioIn);
+			clip.start();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void doSnapShot() {
@@ -1167,23 +1167,21 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 			worker.start();
 		}
 	}
-	
-	private BufferedImage doMirror (BufferedImage image) {
+
+	private BufferedImage doMirror(BufferedImage image) {
 		if (!m_mirrorCheckBox.isSelected()) {
 			return image;
 		}
 		AffineTransform at = new AffineTransform();
 		at.concatenate(AffineTransform.getScaleInstance(-1, -1));
 		at.concatenate(AffineTransform.getTranslateInstance(-image.getWidth(), -image.getHeight()));
-		BufferedImage newImage = new BufferedImage(
-    		   image.getWidth(), image.getHeight(),
-               BufferedImage.TYPE_INT_ARGB);
+		BufferedImage newImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = newImage.createGraphics();
 		g.transform(at);
 		g.drawImage(image, 0, 0, null);
 		g.dispose();
 		return newImage;
-    }
+	}
 
 	private void pauseCapture() {
 		if (m_capturing)
