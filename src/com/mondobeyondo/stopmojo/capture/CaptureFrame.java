@@ -52,11 +52,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.InputStream;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.prefs.Preferences;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
@@ -133,6 +140,8 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 
 	private Webcam m_webcam = null;
 
+	private byte[] m_sound;
+
 	public CaptureFrame(String prjFileName) {
 
 	  m_pref = Preferences.userNodeForPackage(this.getClass());
@@ -175,6 +184,21 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 
 		updateUI();
+		
+		try {
+		  InputStream is = this.getClass().getClassLoader().getResourceAsStream("sounds/shutter1.wav");
+		  BufferedInputStream bis = new BufferedInputStream(is);
+		  ByteArrayOutputStream buf = new ByteArrayOutputStream();
+		  int result = bis.read();
+		  while(result != -1) {
+		      buf.write((byte) result);
+		      result = bis.read();
+		  }
+		  m_sound = buf.toByteArray();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 
 		if (!m_pref.get(PREF_CAPDEVNAME, "").equals(""))
 			setCapDev(m_pref.get(PREF_CAPDEVNAME, ""), m_pref.get(PREF_CAPRESOLUTION, ""));
@@ -1072,6 +1096,7 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 
 	private Image doCapture() {
 		if (m_webcam != null) {
+			playSound();
 			try {
 				return m_webcam.getImage();
 			} catch (Exception e) {
@@ -1080,6 +1105,18 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 		}
 
 		return null;
+	}
+
+	private void playSound() {
+	  try {
+		  ByteArrayInputStream bais = new ByteArrayInputStream(m_sound);
+		  AudioInputStream audioIn = AudioSystem.getAudioInputStream(bais);
+	      Clip clip = AudioSystem.getClip();
+	      clip.open(audioIn);
+	      clip.start();
+	   } catch (Exception e) {
+	      e.printStackTrace();
+	   }
 	}
 
 	private void doSnapShot() {

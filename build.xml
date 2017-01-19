@@ -26,6 +26,7 @@
     <javac srcdir="${src}" destdir="${build}" classpathref="classpath" debug="true"/>
     <copy todir="${build}">
       <fileset dir="${src}" includes="images/**/*" />
+      <fileset dir="${src}" includes="sounds/**/*" />
     </copy>
   </target>
 
