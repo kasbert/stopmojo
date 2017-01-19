@@ -705,10 +705,19 @@ public class CaptureFrame extends JFrame implements ChangeListener {
   		menuItem.setEnabled(true); // TODO isOK
       for (WebcamResolution resolution : WebcamResolution.values()) {
         boolean ok = isOkForWebcam(webcam, resolution);
-        JMenuItem menuItem2 = new JMenuItem((ok ? "" : "x ") + resolution.name() + " : " + resolution.getSize().width +"x"+resolution.getSize().height );
-        menuItem2.addActionListener(new setCapAction(webcam, resolution));
-        menuItem2.setEnabled(true);// TODO isOK
-        menuItem.add(menuItem2);
+        if (ok) {
+	        JMenuItem menuItem2 = new JMenuItem(resolution.name() + " : " + resolution.getSize().width +"x"+resolution.getSize().height );
+	        menuItem2.addActionListener(new setCapAction(webcam, resolution));
+	        menuItem2.setEnabled(true);
+	        menuItem.add(menuItem2);
+        } else {
+    		JMenu menu2 = new JMenu(resolution.name() + " : " + resolution.getSize().width +"x"+resolution.getSize().height );
+	        JMenuItem menuItem2 = new JMenuItem("Use unsupported resolution");
+	        menuItem2.addActionListener(new setCapAction(webcam, resolution));
+	        menuItem2.setEnabled(true);// TODO isOK
+	        menu2.add(menuItem2);
+	        menuItem.add(menu2);
+        }
       }
       menu1.add(menuItem);
 		}
@@ -729,24 +738,12 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 	}
 
 	private boolean isOkForWebcam(Webcam cdi, WebcamResolution resolution) {
-	    Dimension[] predefined = cdi.getViewSizes();
-	    Dimension[] custom = cdi.getCustomViewSizes();
-	    boolean ok = false;
-	    for (Dimension d : predefined) {
+	    for (Dimension d : cdi.getViewSizes()) {
 	      if (d.width == resolution.getSize().width && d.height == resolution.getSize().height) {
-	        ok = true;
-	        break;
+	        return true;
 	      }
 	    }
-	    if (!ok) {
-	      for (Dimension d : custom) {
-	        if (d.width == resolution.getSize().width && d.height == resolution.getSize().height) {
-	          ok = true;
-	          break;
-	        }
-	      }
-	    }
-	    return ok;
+	    return false;
 	  }
 		
 	private JMenu makeProjectMenu() {
@@ -1028,6 +1025,13 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 
 		if (webcam != null) {
 		  if (resolution != null) {
+			  if (!isOkForWebcam(webcam, resolution)) {
+				  // force resolution
+				  Dimension[] sizes = new Dimension [] {
+						  resolution.getSize()
+				  };
+				webcam.setCustomViewSizes(sizes);
+			  }
         webcam.setViewSize(resolution.getSize());
 	      m_pref.put(PREF_CAPRESOLUTION, resolution.name());
 		  }
