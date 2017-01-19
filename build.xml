@@ -23,7 +23,10 @@
   <target name="compile" depends="init"
         description="compile the source">
     <!-- Compile the java code from ${src} into ${build} -->
-    <javac srcdir="${src}" destdir="${build}" classpathref="classpath"/>
+    <javac srcdir="${src}" destdir="${build}" classpathref="classpath" debug="true"/>
+    <copy todir="${build}">
+      <fileset dir="${src}" includes="images/**/*" />
+    </copy>
   </target>
 
   <target name="jar" depends="compile"

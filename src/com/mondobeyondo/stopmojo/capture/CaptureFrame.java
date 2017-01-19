@@ -55,7 +55,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Hashtable;
-import java.util.Vector;
+import java.util.List;
 import java.util.prefs.Preferences;
 
 import javax.media.CaptureDeviceInfo;
@@ -98,6 +98,8 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import com.github.sarxos.webcam.Webcam;
+import com.github.sarxos.webcam.WebcamResolution;
 import com.mondobeyondo.stopmojo.util.CDSWrapper;
 import com.mondobeyondo.stopmojo.util.FieldPanel;
 import com.mondobeyondo.stopmojo.util.FramePosSizeHandler;
@@ -105,8 +107,6 @@ import com.mondobeyondo.stopmojo.util.ImageDataSource;
 import com.mondobeyondo.stopmojo.util.Project;
 import com.mondobeyondo.stopmojo.util.ProjectFrameSource;
 import com.mondobeyondo.stopmojo.util.SwingWorker;
-import com.mondobeyondo.stopmojo.webcam.CapturePlugin;
-import com.mondobeyondo.stopmojo.webcam.WebcamCapturePlugin;
 
 /**
  * @author Derry Bryson
@@ -116,7 +116,7 @@ import com.mondobeyondo.stopmojo.webcam.WebcamCapturePlugin;
  */
 public class CaptureFrame extends JFrame implements ChangeListener {
 	private static final String PREF_VDIVLOC = "VDivLoc", PREF_HDIVLOC = "HDivLoc", PREF_CAPDEVNAME = "CapDevName",
-			PREF_CAPFORMAT = "CapFormat", PREF_GRIDON = "GridOn",
+	    PREF_CAPRESOLUTION = "CapResolution", PREF_CAPFORMAT = "CapFormat", PREF_GRIDON = "GridOn",
 			PREF_GRIDNUMH = "GridNumH", PREF_GRIDNUMV = "GridNumV";
 
 	private static final int FRAME_TIMEOUT = 250;
@@ -148,14 +148,11 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 
 	private boolean m_capturing = false;
 
-	private CapturePlugin m_capturePlugin;
-
-	private CapturePlugin m_curCapturePlugin = null;
+	private Webcam m_webcam = null;
 
 	public CaptureFrame(String prjFileName) {
-	  m_capturePlugin = new WebcamCapturePlugin();
 
-		m_pref = Preferences.userNodeForPackage(this.getClass());
+	  m_pref = Preferences.userNodeForPackage(this.getClass());
 
 		setTitle("");
 		setIconImage(Capture.s_stopmojoImage);
@@ -197,7 +194,7 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 		updateUI();
 
 		if (!m_pref.get(PREF_CAPDEVNAME, "").equals(""))
-			setCapDev(m_pref.get(PREF_CAPDEVNAME, ""));
+			setCapDev(m_pref.get(PREF_CAPDEVNAME, ""), m_pref.get(PREF_CAPRESOLUTION, ""));
 
 		if (prjFileName != null)
 			doFileOpen(prjFileName);
@@ -659,21 +656,34 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 
 		menu.addSeparator();
 
-		class setCapAction implements java.awt.event.ActionListener {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				onFileSelCapDev();
-			}
-		}
-		;
+    class setCapAction implements java.awt.event.ActionListener {
+      Webcam webcam;
+      WebcamResolution resolution;
+      public setCapAction(Webcam webcam, WebcamResolution resolution) {
+        this.webcam = webcam;
+        this.resolution = resolution;
+      }
 
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        onFileSelCapDev(webcam, resolution);
+      }
+    }
+    ;
 		menu1 = new JMenu("Select/Configure Capture Device");
 		menu1.setMnemonic(KeyEvent.VK_F);
-			CapturePlugin p = m_capturePlugin;
 
-			menuItem = new JMenuItem("Devices");
-			menuItem.addActionListener(new setCapAction());
-			menuItem.setEnabled(p.isOk());
-			menu1.add(menuItem);
+		for (Webcam webcam : Webcam.getWebcams()) {
+  		menuItem = new JMenu(webcam.getName());
+  		menuItem.setEnabled(true); // TODO isOK
+      for (WebcamResolution resolution : WebcamResolution.values()) {
+        boolean ok = isOkForWebcam(webcam, resolution);
+        JMenuItem menuItem2 = new JMenuItem((ok ? "" : "x ") + resolution.name() + " : " + resolution.getSize().width +"x"+resolution.getSize().height );
+        menuItem2.addActionListener(new setCapAction(webcam, resolution));
+        menuItem2.setEnabled(true);// TODO isOK
+        menuItem.add(menuItem2);
+      }
+      menu1.add(menuItem);
+		}
 			
 		menu.add(menu1);
 		menu.addSeparator();
@@ -690,6 +700,27 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 		return menu;
 	}
 
+	private boolean isOkForWebcam(Webcam cdi, WebcamResolution resolution) {
+	    Dimension[] predefined = cdi.getViewSizes();
+	    Dimension[] custom = cdi.getCustomViewSizes();
+	    boolean ok = false;
+	    for (Dimension d : predefined) {
+	      if (d.width == resolution.getSize().width && d.height == resolution.getSize().height) {
+	        ok = true;
+	        break;
+	      }
+	    }
+	    if (!ok) {
+	      for (Dimension d : custom) {
+	        if (d.width == resolution.getSize().width && d.height == resolution.getSize().height) {
+	          ok = true;
+	          break;
+	        }
+	      }
+	    }
+	    return ok;
+	  }
+		
 	private JMenu makeProjectMenu() {
 		JMenu menu, menu1;
 
@@ -794,7 +825,10 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 			m_timer = null;
 		}
 
-		m_capturePlugin.dispose();
+		if (m_webcam != null) {
+		  m_webcam.close();
+		  m_webcam = null;
+		}
 		FramePosSizeHandler.saveSizeAndPosition(this);
 
 		dispose();
@@ -922,20 +956,31 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 		updateUI();
 	}
 
-	private void setCapDev(String devName) {
+	private void setCapDev(String devName, String resName) {
 		Cursor oldCursor = getCursor();
 		setCursor(new Cursor(Cursor.WAIT_CURSOR));
-		CapturePlugin cp = m_capturePlugin;
-		try {
-			if (cp.selectCaptureDevice(this, devName, false))
-				setCapturePlugin(cp);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+
+		WebcamResolution resolution = null;
+    for (WebcamResolution r : WebcamResolution.values()) {
+      if (r.name().equalsIgnoreCase(resName)) {
+        resolution = r;
+        break;
+      }
+    }
+    List<Webcam> webcams = Webcam.getWebcams();
+    for (Webcam webcam : webcams) {
+      if (devName.equalsIgnoreCase(webcam.getName())) {
+        try {
+          setCapturePlugin(webcam, resolution);
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+    }
 		setCursor(oldCursor);
 	}
 
-	private void setCapturePlugin(CapturePlugin p) {
+	private void setCapturePlugin(Webcam webcam, WebcamResolution resolution) {
 		Cursor oldCursor = getCursor();
 		setCursor(new Cursor(Cursor.WAIT_CURSOR));
 
@@ -943,65 +988,51 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 		m_capturing = false;
 		if (m_timer != null)
 			m_timer.stop();
-		if (m_curCapturePlugin != null) {
+		if (m_webcam != null) {
 			try {
-				m_curCapturePlugin.stopCapture();
-				m_curCapturePlugin.dispose();
+			  m_webcam.close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 
-		m_curCapturePlugin = null;
+		m_webcam = null;
 
-		if (p != null) {
+		if (webcam != null) {
+		  if (resolution != null) {
+        webcam.setViewSize(resolution.getSize());
+	      m_pref.put(PREF_CAPRESOLUTION, resolution.name());
+		  }
 			try {
-				p.startCapture();
+			  webcam.open();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			m_curCapturePlugin = p;
+			m_webcam = webcam;
 			setTimer(FRAME_TIMEOUT);
 			m_capturing = true;
 			updateUI();
-			System.out.println("selected device: " + p.getCaptureDeviceName());
-			m_pref.put(PREF_CAPDEVNAME, p.getCaptureDeviceName());
+			System.out.println("selected device: " + webcam.getName() + ", resolution: " + resolution);
+			m_pref.put(PREF_CAPDEVNAME, webcam.getName());
 		} else
 			m_compImagePanel.setImage(0, null);
 
 		setCursor(oldCursor);
 	}
 
-	private void onFileSelCapDev() {
-		CapturePlugin cp = m_capturePlugin;
-
+	private void onFileSelCapDev(Webcam webcam, WebcamResolution resolution) {
 		if (m_timer != null) {
 			m_timer.stop();
 			m_timer = null;
 		}
-		setCapturePlugin(null);
+		setCapturePlugin(null, null);
 
 		try {
-			if (cp.selectCaptureDevice(this, m_pref.get(PREF_CAPDEVNAME, ""), true)) {
-				setCapturePlugin(cp);
-			} else
-				setCapturePlugin(null);
+	    setCapturePlugin(webcam, resolution);
 		} catch (Exception e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 		}
-		/*
-		 * CaptureDeviceDialog d = new CaptureDeviceDialog(this,
-		 * m_pref.get(PREF_CAPDEVNAME, ""), m_pref.getInt(PREF_CAPFORMAT, -1));
-		 * 
-		 * if(d.showModal()) { m_pref.put(PREF_CAPDEVNAME, d.getDevName());
-		 * m_pref.putInt(PREF_CAPFORMAT, d.getFormatIndex());
-		 * if(!d.getDevName().trim().equals("")) { if(m_capDS != null)
-		 * m_capDS.disconnect();
-		 * 
-		 * if(m_capMediaPlayer != null) { m_capMediaPlayer.close(); }
-		 * setCapDev(d.getDevName(), d.getFormatIndex()); } }
-		 */
 	}
 
 	private void onClose(java.awt.event.WindowEvent evt) {
@@ -1168,9 +1199,9 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 	}
 
 	private Image doCapture() {
-		if (m_curCapturePlugin != null && m_curCapturePlugin.isOk()) {
+		if (m_webcam != null) {
 			try {
-				return m_curCapturePlugin.grabImage();
+				return m_webcam.getImage();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -1180,11 +1211,11 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 	}
 
 	private void doSnapShot() {
-		if (m_curCapturePlugin != null && m_curCapturePlugin.isOk()) {
+		if (m_webcam != null) {
 			SwingWorker worker = new SwingWorker() {
 				public Object construct() {
 					try {
-						return m_curCapturePlugin.grabPreviewImage();
+				    return m_webcam.getImage();
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
