@@ -52,6 +52,8 @@ import java.text.Format;
  */
 public class JFormattedTextFieldX extends javax.swing.JFormattedTextField {
 
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * 
 	 */

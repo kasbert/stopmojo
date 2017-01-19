@@ -49,6 +49,8 @@ package com.mondobeyondo.stopmojo.util;
  *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 public class InvalidProjectException extends Exception {
+	private static final long serialVersionUID = 1L;
+
 	InvalidProjectException(String why) {
 		super("Invalid Project - " + why);
 	}

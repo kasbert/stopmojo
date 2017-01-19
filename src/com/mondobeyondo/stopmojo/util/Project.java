@@ -131,8 +131,6 @@ public class Project {
 	}
 
 	private boolean createFrameDir() {
-		boolean retval = false;
-
 		File f = new File(getFrameDir());
 
 		if (!f.exists())

@@ -72,6 +72,7 @@ import com.mondobeyondo.stopmojo.util.BasicDialog;
  *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 public class PlayerDialog extends BasicDialog implements ControllerListener {
+	private static final long serialVersionUID = 1L;
 	MediaPlayer m_mediaPlayer;
 
 	public PlayerDialog(JFrame frame, MediaPlayer mediaPlayer, String title) {

@@ -835,7 +835,7 @@ public class Util {
 	 * 'A.', 'P' are not supported. This routine is destructive to RType.
 	 */
 	{
-		int T1, T2, T3;
+		//int T1, T2, T3;
 
 		switch (Character.toUpperCase(RType.charAt(0))) {
 		case 'U':
@@ -924,7 +924,7 @@ public class Util {
 	public static boolean Check_Date(String Date) { /* Check_Date */
 		boolean BadDate;
 
-		char Dlmtr;
+		//char Dlmtr;
 
 		String DayStr = "", MonthStr = "", YearStr = "";
 
@@ -1199,7 +1199,7 @@ public class Util {
 		return value;
 	}
 
-	public static int parseCSVLine(String line, char delim, char quote, char escape, Vector values) {
+	public static int parseCSVLine(String line, char delim, char quote, char escape, Vector<String> values) {
 		values.clear();
 
 		if (line.length() == 0)
@@ -1207,7 +1207,7 @@ public class Util {
 
 		StringBuffer field = new StringBuffer(), sb = new StringBuffer(line);
 
-		boolean retval = true, inQuote = false, sawSlash = false;
+		boolean inQuote = false, sawSlash = false;
 
 		int i, len = line.length();
 

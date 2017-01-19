@@ -47,6 +47,8 @@ package com.mondobeyondo.stopmojo.capture;
  *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 public class ProjectMovieMakerException extends Exception {
+	private static final long serialVersionUID = 1L;
+
 	public ProjectMovieMakerException(String msg) {
 		super(msg);
 	}

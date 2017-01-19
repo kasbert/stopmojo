@@ -49,7 +49,6 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -65,6 +64,8 @@ import com.mondobeyondo.stopmojo.util.RTypeTextField;
  *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 public class NewProjectDialog extends BasicDialog {
+	private static final long serialVersionUID = 1L;
+
 	private JButton m_helpBut, m_okBut, m_cancelBut;
 
 	private JTextField m_folderTextField, m_nameTextField;
@@ -162,9 +163,8 @@ public class NewProjectDialog extends BasicDialog {
 	}
 
 	private JPanel makeFieldPanel() {
-		JLabel label;
-
-		GridBagConstraints gbc;
+		//JLabel label;
+		//GridBagConstraints gbc;
 
 		FieldPanel fieldPanel = new FieldPanel();
 
@@ -198,7 +198,7 @@ public class NewProjectDialog extends BasicDialog {
 	}
 
 	public boolean showModal() {
-		show();
+		setVisible(true);
 		return m_retval;
 	}
 

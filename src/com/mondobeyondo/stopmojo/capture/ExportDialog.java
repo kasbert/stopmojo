@@ -90,7 +90,6 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -114,6 +113,8 @@ import com.mondobeyondo.stopmojo.util.Util;
  *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 public class ExportDialog extends BasicDialog implements ControllerListener, ActionListener, DataSinkListener {
+	private static final long serialVersionUID = 1L;
+
 	Processor m_processor = null;
 
 	ImageDataSource m_dataSource = null;
@@ -124,7 +125,7 @@ public class ExportDialog extends BasicDialog implements ControllerListener, Act
 
 	Format m_formats[];
 
-	JComboBox m_fileTypeComboBox, m_encodingComboBox, m_bppComboBox;
+	JComboBox<SimpleListModelData> m_fileTypeComboBox, m_encodingComboBox, m_bppComboBox;
 
 	Project m_project;
 
@@ -233,25 +234,23 @@ public class ExportDialog extends BasicDialog implements ControllerListener, Act
 	}
 
 	private JPanel makeFieldPanel() {
-		JLabel label;
-
-		GridBagConstraints gbc;
-
-		int sel = -1;
+		//JLabel label;
+		//GridBagConstraints gbc;
+		//int sel = -1;
 
 		FieldPanel fieldPanel = new FieldPanel();
 
-		m_fileTypeComboBox = new JComboBox();
+		m_fileTypeComboBox = new JComboBox<SimpleListModelData>();
 		m_fileTypeComboBox.setEditable(false);
 		m_fileTypeComboBox.addActionListener(this);
 		fieldPanel.addField("File Type:", m_fileTypeComboBox, 50);
 
-		m_encodingComboBox = new JComboBox();
+		m_encodingComboBox = new JComboBox<SimpleListModelData>();
 		m_encodingComboBox.setEditable(false);
 		m_encodingComboBox.addActionListener(this);
 		fieldPanel.addField("Encoding:", m_encodingComboBox, 50);
 
-		m_bppComboBox = new JComboBox();
+		m_bppComboBox = new JComboBox<SimpleListModelData>();
 		m_bppComboBox.setEditable(false);
 		m_bppComboBox.addActionListener(this);
 		fieldPanel.addField("Bits Per Pixel:", m_bppComboBox, 50);
@@ -354,7 +353,7 @@ public class ExportDialog extends BasicDialog implements ControllerListener, Act
 	private void fillFileTypeComboBox() {
 		int count = 0, sel = 0;
 
-		DefaultComboBoxModel cm = new DefaultComboBoxModel();
+		DefaultComboBoxModel<SimpleListModelData> cm = new DefaultComboBoxModel<SimpleListModelData>();
 
 		m_contentDesc = m_processor.getSupportedContentDescriptors();
 		for (int i = 0; i < m_contentDesc.length; i++) {
@@ -374,7 +373,7 @@ public class ExportDialog extends BasicDialog implements ControllerListener, Act
 	private void fillEncodingComboBox() {
 		int i = m_fileTypeComboBox.getSelectedIndex();
 
-		TreeSet encodings = new TreeSet();
+		//TreeSet encodings = new TreeSet();
 
 		if (i != -1) {
 			// System.out.println("get formats");
@@ -383,9 +382,9 @@ public class ExportDialog extends BasicDialog implements ControllerListener, Act
 			TrackControl tc[] = m_processor.getTrackControls();
 			m_formats = tc[0].getSupportedFormats();
 
-			TreeSet set = new TreeSet();
+			TreeSet<SimpleListModelData> set = new TreeSet<SimpleListModelData>();
 
-			DefaultComboBoxModel cm = new DefaultComboBoxModel();
+			DefaultComboBoxModel<SimpleListModelData> cm = new DefaultComboBoxModel<SimpleListModelData>();
 
 			for (i = 0; i < m_formats.length; i++) {
 				if (m_formats[i] instanceof VideoFormat) {
@@ -396,7 +395,7 @@ public class ExportDialog extends BasicDialog implements ControllerListener, Act
 				}
 			}
 
-			Iterator it = set.iterator();
+			Iterator<SimpleListModelData> it = set.iterator();
 			while (it.hasNext())
 				cm.addElement(it.next());
 
@@ -407,9 +406,9 @@ public class ExportDialog extends BasicDialog implements ControllerListener, Act
 
 	private void fillBppComboBox() {
 		// System.out.println("filling bpp combo box");
-		TreeSet set = new TreeSet();
+		TreeSet<SimpleListModelData> set = new TreeSet<SimpleListModelData>();
 
-		DefaultComboBoxModel cm = new DefaultComboBoxModel();
+		DefaultComboBoxModel<SimpleListModelData> cm = new DefaultComboBoxModel<SimpleListModelData>();
 
 		for (int i = 0; i < m_formats.length; i++) {
 			if (m_formats[i] instanceof RGBFormat) {
@@ -424,7 +423,7 @@ public class ExportDialog extends BasicDialog implements ControllerListener, Act
 			}
 		}
 
-		Iterator it = set.iterator();
+		Iterator<SimpleListModelData> it = set.iterator();
 		while (it.hasNext())
 			cm.addElement(it.next());
 

@@ -49,6 +49,8 @@ package com.mondobeyondo.stopmojo.util;
  *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 public class RTypeTextField extends JFormattedTextFieldX {
+	private static final long serialVersionUID = 1L;
+
 	public RTypeTextField(String rtype) {
 		super(new RTypeFormatter(rtype));
 	}

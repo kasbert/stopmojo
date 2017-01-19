@@ -55,6 +55,7 @@ import javax.swing.JPanel;
  *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 public class FieldPanel extends JPanel {
+	private static final long serialVersionUID = 1L;
 	private int m_fieldCount;
 
 	public FieldPanel() {

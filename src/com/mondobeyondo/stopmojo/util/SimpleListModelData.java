@@ -48,7 +48,7 @@ package com.mondobeyondo.stopmojo.util;
  *         To change the template for this generated type comment go to
  *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class SimpleListModelData implements Comparable {
+public class SimpleListModelData implements Comparable<SimpleListModelData> {
 	String m_entryText;
 
 	Object m_data;
@@ -79,9 +79,7 @@ public class SimpleListModelData implements Comparable {
 		return false;
 	}
 
-	public int compareTo(Object o) {
-		SimpleListModelData d = (SimpleListModelData) o;
-
+	public int compareTo(SimpleListModelData d) {
 		return m_entryText.compareTo(d.m_entryText);
 	}
 }

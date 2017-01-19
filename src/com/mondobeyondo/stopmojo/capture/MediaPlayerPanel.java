@@ -53,6 +53,7 @@ import javax.swing.JPanel;
  *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 public class MediaPlayerPanel extends JPanel {
+	private static final long serialVersionUID = 1L;
 	MediaPlayer m_player;
 
 	public MediaPlayerPanel(MediaPlayer player, boolean showControls) {

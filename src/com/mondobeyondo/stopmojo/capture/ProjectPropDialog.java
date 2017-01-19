@@ -50,7 +50,6 @@ import java.awt.event.KeyEvent;
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -68,13 +67,15 @@ import com.mondobeyondo.stopmojo.util.Util;
  *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 public class ProjectPropDialog extends BasicDialog {
+	private static final long serialVersionUID = 1L;
+
 	private JButton m_helpBut, m_okBut, m_cancelBut;
 
 	private JTextField m_fpsTextField;
 
-	private JButton m_browseBut;
+	//private JButton m_browseBut;
 
-	private JComboBox m_formatComboBox;
+	private JComboBox<String> m_formatComboBox;
 
 	private Project m_prj;
 
@@ -84,7 +85,7 @@ public class ProjectPropDialog extends BasicDialog {
 	}
 
 	private void init(Project prj) {
-		int i;
+		//int i;
 
 		m_prj = prj;
 
@@ -171,16 +172,16 @@ public class ProjectPropDialog extends BasicDialog {
 	}
 
 	private JPanel makeFieldPanel() {
-		JLabel label;
+		//JLabel label;
 
-		GridBagConstraints gbc;
+		//GridBagConstraints gbc;
 
 		int i, sel = -1;
 
 		FieldPanel fieldPanel = new FieldPanel();
 
 		String[] formats = { "jpg", "png", "tif", "bmp" };
-		m_formatComboBox = new JComboBox();
+		m_formatComboBox = new JComboBox<String>();
 		for (i = 0, sel = 0; i < formats.length; i++)
 			if (ImageIO.getImageWritersBySuffix(formats[i]).hasNext()) {
 				m_formatComboBox.addItem(formats[i]);

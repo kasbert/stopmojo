@@ -54,6 +54,7 @@ import javax.swing.text.DocumentFilter;
  *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 public class RTypeFormatter extends DefaultFormatter {
+	private static final long serialVersionUID = 1L;
 	private String m_rtype;
 
 	public RTypeFormatter(String rtype) {

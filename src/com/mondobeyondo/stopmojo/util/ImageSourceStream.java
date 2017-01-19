@@ -45,7 +45,6 @@ package com.mondobeyondo.stopmojo.util;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.Vector;
 
 import javax.media.Buffer;
 import javax.media.Format;
@@ -61,9 +60,10 @@ import javax.media.protocol.PullBufferStream;
  *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 public class ImageSourceStream implements PullBufferStream {
-	private Vector m_images;
+	//private Vector m_images;
 
-	private int m_curFrame, m_nextImage = 0; // index of the next image to be
+	private int m_curFrame;
+	//private int m_nextImage = 0; // index of the next image to be
 												// read.
 
 	private VideoFormat m_format;
@@ -72,18 +72,18 @@ public class ImageSourceStream implements PullBufferStream {
 
 	private ImageFrameSource m_source;
 
-	private static final boolean s_intArray = true;
+	//private static final boolean s_intArray = true;
 
 	private int m_data[];
 
-	private float m_frameRate;
+	//private float m_frameRate;
 
 	private long m_frameDuration;
 
 	public ImageSourceStream(float frameRate, ImageFrameSource source) {
 		m_source = source;
 		m_curFrame = 0;
-		m_frameRate = frameRate;
+		//m_frameRate = frameRate;
 		BufferedImage img = source.getImage(0);
 		m_format = new RGBFormat(new Dimension(img.getWidth(), img.getHeight()), img.getWidth() * img.getHeight(),
 				Format.intArray, frameRate, 24, 0x00ff0000, 0x0000ff00, 0x000000ff, 1, img.getWidth(), Format.FALSE,

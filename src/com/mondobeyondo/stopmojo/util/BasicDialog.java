@@ -61,6 +61,8 @@ import javax.swing.KeyStroke;
  *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 public class BasicDialog extends JDialog {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * @throws java.awt.HeadlessException
 	 */

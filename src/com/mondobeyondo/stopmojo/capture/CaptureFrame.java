@@ -81,7 +81,6 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JSpinner;
 import javax.swing.JSplitPane;
-import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SpinnerNumberModel;
@@ -107,6 +106,8 @@ import com.mondobeyondo.stopmojo.util.SwingWorker;
  *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 public class CaptureFrame extends JFrame implements ChangeListener {
+	private static final long serialVersionUID = 1L;
+
 	private static final String PREF_VDIVLOC = "VDivLoc", PREF_HDIVLOC = "HDivLoc", PREF_CAPDEVNAME = "CapDevName",
 			PREF_CAPRESOLUTION = "CapResolution", PREF_CAPFORMAT = "CapFormat", PREF_MIRRORON = "MirrorOn",
 			PREF_GRIDON = "GridOn", PREF_GRIDNUMH = "GridNumH", PREF_GRIDNUMV = "GridNumV";
@@ -258,7 +259,7 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 
 		JLabel l;
 
-		Hashtable labelTable;
+		Hashtable<Integer, JLabel> labelTable;
 
 		// p.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED),
 		// "Composite"));
@@ -286,7 +287,7 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 		m_prevFrameAlphaSlider.addChangeListener(this);
 		m_prevFrameAlphaSlider.setMajorTickSpacing(10);
 		// m_prevFrameAlphaSlider.setMinorTickSpacing(1);
-		labelTable = new Hashtable();
+		labelTable = new Hashtable<Integer, JLabel>();
 		labelTable.put(new Integer(0), new JLabel("0"));
 		labelTable.put(new Integer(50), new JLabel("50"));
 		labelTable.put(new Integer(100), new JLabel("100"));
@@ -308,7 +309,7 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 		m_mainAlphaSlider.setMajorTickSpacing(10);
 		// m_mainAlphaSlider.setMinorTickSpacing(0);
 		m_mainAlphaSlider.setPaintTicks(true);
-		labelTable = new Hashtable();
+		labelTable = new Hashtable<Integer, JLabel>();
 		labelTable.put(new Integer(0), new JLabel("0"));
 		labelTable.put(new Integer(50), new JLabel("50"));
 		labelTable.put(new Integer(100), new JLabel("100"));
@@ -473,7 +474,7 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 
 		JButton button;
 
-		JToggleButton tbutton;
+		//JToggleButton tbutton;
 
 		toolBar.setFloatable(false);
 		toolBar.setRollover(true);
@@ -560,66 +561,90 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 
 	private void initActions() {
 		m_fileNewAction = new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
 			public void actionPerformed(ActionEvent e) {
 				onFileNew();
 			}
 		};
 
 		m_fileOpenAction = new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
 			public void actionPerformed(ActionEvent e) {
 				onFileOpen();
 			}
 		};
 
 		m_fileCloseAction = new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
 			public void actionPerformed(ActionEvent e) {
 				onFileClose();
 			}
 		};
 
 		m_projectPropAction = new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
 			public void actionPerformed(ActionEvent e) {
 				onProjectProp();
 			}
 		};
 		m_capture1Action = new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
 			public void actionPerformed(ActionEvent e) {
 				onCapture(1);
 			}
 		};
 		m_capture2Action = new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
 			public void actionPerformed(ActionEvent e) {
 				onCapture(2);
 			}
 		};
 		m_capture3Action = new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
 			public void actionPerformed(ActionEvent e) {
 				onCapture(3);
 			}
 		};
 		m_capture4Action = new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
 			public void actionPerformed(ActionEvent e) {
 				onCapture(4);
 			}
 		};
 
 		m_previewAction = new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
 			public void actionPerformed(ActionEvent e) {
 				onPreview();
 			}
 		};
 
 		m_exportAction = new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
 			public void actionPerformed(ActionEvent e) {
 				onExport();
 			}
 		};
 		m_mirrorOnOffAction = new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
 			public void actionPerformed(ActionEvent e) {
 				onMirrorOnOff();
 			}
 		};
 		m_gridOnOffAction = new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
 			public void actionPerformed(ActionEvent e) {
 				onGridOnOff();
 			}

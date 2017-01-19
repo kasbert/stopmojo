@@ -56,6 +56,8 @@ import javax.swing.JPanel;
  *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 public class ImagePanel extends JPanel {
+	private static final long serialVersionUID = 1L;
+
 	private Image m_images[];
 
 	private AlphaComposite m_alphas[];

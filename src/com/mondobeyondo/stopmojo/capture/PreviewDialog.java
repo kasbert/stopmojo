@@ -66,13 +66,15 @@ import com.mondobeyondo.stopmojo.util.Project;
  *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 public class PreviewDialog extends BasicDialog implements ChangeListener {
+	private static final long serialVersionUID = 1L;
+
 	private Project m_prj;
 
 	private Timer m_timer;
 
 	private int m_curFrame, m_numFrames, m_delay;
 
-	private boolean m_playing;
+	//private boolean m_playing;
 
 	private ImagePanel m_imagePanel;
 
@@ -87,7 +89,7 @@ public class PreviewDialog extends BasicDialog implements ChangeListener {
 		m_prj = prj;
 		m_curFrame = 0;
 		m_numFrames = m_prj.getNumFrames();
-		m_playing = true;
+		//m_playing = true;
 
 		setTitle(title);
 

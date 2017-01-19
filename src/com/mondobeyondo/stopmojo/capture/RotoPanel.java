@@ -50,4 +50,6 @@ import javax.swing.JPanel;
  */
 public class RotoPanel extends JPanel {
 
+	private static final long serialVersionUID = 1L;
+
 }
