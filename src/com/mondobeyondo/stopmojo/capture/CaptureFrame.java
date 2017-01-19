@@ -44,6 +44,7 @@ import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -51,6 +52,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -106,8 +108,8 @@ import com.mondobeyondo.stopmojo.util.SwingWorker;
  */
 public class CaptureFrame extends JFrame implements ChangeListener {
 	private static final String PREF_VDIVLOC = "VDivLoc", PREF_HDIVLOC = "HDivLoc", PREF_CAPDEVNAME = "CapDevName",
-	    PREF_CAPRESOLUTION = "CapResolution", PREF_CAPFORMAT = "CapFormat", PREF_GRIDON = "GridOn",
-			PREF_GRIDNUMH = "GridNumH", PREF_GRIDNUMV = "GridNumV";
+	    PREF_CAPRESOLUTION = "CapResolution", PREF_CAPFORMAT = "CapFormat", PREF_MIRRORON = "MirrorOn",
+	    PREF_GRIDON = "GridOn", PREF_GRIDNUMH = "GridNumH", PREF_GRIDNUMV = "GridNumV";
 
 	private static final int FRAME_TIMEOUT = 250;
 
@@ -130,9 +132,12 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 	private JSpinner m_prevFrameOffsetSpinner, m_curFrameSpinner, m_gridHSpinner, m_gridVSpinner;
 
 	private Action m_fileNewAction, m_fileOpenAction, m_fileCloseAction, m_capture1Action, m_capture2Action,
-			m_capture3Action, m_capture4Action, m_projectPropAction, m_previewAction, m_exportAction, m_gridOnOffAction;
+			m_capture3Action, m_capture4Action, m_projectPropAction, m_previewAction, m_exportAction,
+			m_mirrorOnOffAction, m_gridOnOffAction;
 
 	private JCheckBox m_gridCheckBox;
+
+	private JCheckBox m_mirrorCheckBox;
 
 	private Preferences m_pref;
 
@@ -509,6 +514,17 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 
 		toolBar.addSeparator();
 
+		m_mirrorCheckBox = new JCheckBox();
+		m_mirrorCheckBox.setAction(m_mirrorOnOffAction);
+		// m_mirrorCheckBox.setText("Mirror:");
+		m_mirrorCheckBox.setHorizontalAlignment(JCheckBox.LEFT);
+		m_mirrorCheckBox.setFont(button.getFont().deriveFont(Font.PLAIN, 10));
+		m_mirrorCheckBox.setToolTipText("Rotate 180 degrees");
+		m_mirrorCheckBox.setFocusable(false);
+		m_mirrorCheckBox.setSelected(m_pref.getBoolean(PREF_MIRRORON, false));
+		toolBar.add(new JLabel("Mirror:"));
+		toolBar.add(m_mirrorCheckBox);
+
 		m_gridCheckBox = new JCheckBox();
 		m_gridCheckBox.setAction(m_gridOnOffAction);
 		// m_gridCheckBox.setText("Grid:");
@@ -597,6 +613,11 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 		m_exportAction = new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 				onExport();
+			}
+		};
+		m_mirrorOnOffAction = new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				onMirrorOnOff();
 			}
 		};
 		m_gridOnOffAction = new AbstractAction() {
@@ -1071,6 +1092,10 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 		unpauseCapture();
 	}
 
+	private void onMirrorOnOff() {
+		m_pref.putBoolean(PREF_MIRRORON, m_mirrorCheckBox.isSelected());
+	}
+
 	private void onGridOnOff() {
 		m_compImagePanel.showGrid(m_gridCheckBox.isSelected());
 	}
@@ -1098,7 +1123,7 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 		if (m_webcam != null) {
 			playSound();
 			try {
-				return m_webcam.getImage();
+				return doMirror(m_webcam.getImage());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -1124,7 +1149,7 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 			SwingWorker worker = new SwingWorker() {
 				public Object construct() {
 					try {
-				    return m_webcam.getImage();
+						return doMirror(m_webcam.getImage());
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -1138,6 +1163,23 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 			worker.start();
 		}
 	}
+	
+	private BufferedImage doMirror (BufferedImage image) {
+		if (!m_mirrorCheckBox.isSelected()) {
+			return image;
+		}
+		AffineTransform at = new AffineTransform();
+		at.concatenate(AffineTransform.getScaleInstance(-1, -1));
+		at.concatenate(AffineTransform.getTranslateInstance(-image.getWidth(), -image.getHeight()));
+		BufferedImage newImage = new BufferedImage(
+    		   image.getWidth(), image.getHeight(),
+               BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = newImage.createGraphics();
+		g.transform(at);
+		g.drawImage(image, 0, 0, null);
+		g.dispose();
+		return newImage;
+    }
 
 	private void pauseCapture() {
 		if (m_capturing)
