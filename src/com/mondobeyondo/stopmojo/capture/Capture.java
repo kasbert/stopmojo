@@ -48,7 +48,6 @@ import java.io.FileInputStream;
 import java.util.Properties;
 import java.util.prefs.Preferences;
 
-import javax.media.Manager;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
@@ -140,8 +139,6 @@ public class Capture {
 		s_closeIcon = new ImageIcon(Capture.class.getResource("/images/DeleteDocument16.gif"));
 		s_bigCloseIcon = new ImageIcon(Capture.class.getResource("/images/DeleteDocument20.gif"));
 
-		Manager.setHint(Manager.LIGHTWEIGHT_RENDERER, new Boolean(true));
-
 		String prjFileName = null;
 
 		if (args.length > 0)
@@ -149,7 +146,7 @@ public class Capture {
 
 		CaptureFrame f = new CaptureFrame(prjFileName);
 
-		f.show();
+		f.setVisible(true);
 	}
 
 	public static Properties getProp() {

@@ -53,24 +53,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.prefs.Preferences;
 
-import javax.media.CaptureDeviceInfo;
-import javax.media.CaptureDeviceManager;
-import javax.media.Format;
-import javax.media.Manager;
-import javax.media.MediaLocator;
-import javax.media.NoDataSourceException;
-import javax.media.bean.playerbean.MediaPlayer;
-import javax.media.control.FormatControl;
-import javax.media.format.VideoFormat;
-import javax.media.protocol.CaptureDevice;
-import javax.media.protocol.DataSource;
-import javax.media.protocol.FileTypeDescriptor;
-import javax.media.protocol.PushBufferDataSource;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
@@ -100,12 +86,9 @@ import javax.swing.event.ChangeListener;
 
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamResolution;
-import com.mondobeyondo.stopmojo.util.CDSWrapper;
 import com.mondobeyondo.stopmojo.util.FieldPanel;
 import com.mondobeyondo.stopmojo.util.FramePosSizeHandler;
-import com.mondobeyondo.stopmojo.util.ImageDataSource;
 import com.mondobeyondo.stopmojo.util.Project;
-import com.mondobeyondo.stopmojo.util.ProjectFrameSource;
 import com.mondobeyondo.stopmojo.util.SwingWorker;
 
 /**
@@ -669,7 +652,7 @@ public class CaptureFrame extends JFrame implements ChangeListener {
       }
     }
     ;
-		menu1 = new JMenu("Select/Configure Capture Device");
+		menu1 = new JMenu("Select Capture Device");
 		menu1.setMnemonic(KeyEvent.VK_F);
 
 		for (Webcam webcam : Webcam.getWebcams()) {
@@ -722,7 +705,7 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 	  }
 		
 	private JMenu makeProjectMenu() {
-		JMenu menu, menu1;
+		JMenu menu;
 
 		JMenuItem menuItem;
 
@@ -922,7 +905,7 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 
 		ProjectPropDialog d = new ProjectPropDialog(this, m_prj);
 
-		d.show();
+		d.setVisible(true);
 		updateUI();
 	}
 
@@ -1046,72 +1029,8 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 	private void onPreview() {
 		PreviewDialog d = new PreviewDialog(this, m_prj, "Preview");
 
-		d.show();
+		d.setVisible(true);
 		d.dispose();
-	}
-
-	public MediaPlayer createMediaPlayer(DataSource dataSource, JFrame parent) {
-		MediaPlayer mediaPlayer = null;
-
-		if (dataSource == null) {
-			JOptionPane.showMessageDialog(parent, "Datasource is null: " + dataSource, "Error",
-					JOptionPane.ERROR_MESSAGE);
-			return (null);
-		}
-
-		mediaPlayer = new MediaPlayer();
-		mediaPlayer.setDataSource(dataSource);
-		if (mediaPlayer.getPlayer() == null) {
-			JOptionPane.showMessageDialog(parent, "Unable to create MediaPlayer for: " + dataSource, "Error",
-					JOptionPane.ERROR_MESSAGE);
-			return (null);
-		}
-
-		return (mediaPlayer);
-	}
-
-	private void onPreview2() {
-		File tf = null;
-
-		if (m_prj != null && m_prj.getNumFrames() > 0) {
-			try {
-				DataSource ds = null;
-
-				if (false) {
-					tf = File.createTempFile("preview", ".mov");
-
-					ProjectMovieMaker pmm = new ProjectMovieMaker(m_prj, FileTypeDescriptor.QUICKTIME,
-							VideoFormat.CINEPAK, tf.getAbsolutePath(), 0);
-
-					Cursor oldCursor = getCursor();
-					setCursor(new Cursor(Cursor.WAIT_CURSOR));
-
-					pmm.doit();
-					setCursor(oldCursor);
-
-					ds = Manager.createDataSource(new MediaLocator("file:" + tf.getAbsolutePath()));
-				} else {
-					ds = new ImageDataSource(m_prj.getFps(), new ProjectFrameSource(m_prj));
-				}
-
-				MediaPlayer mp = createMediaPlayer(ds, this);
-				if (mp != null) {
-					PlayerDialog f = new PlayerDialog(this, mp, "Preview");
-
-					f.show();
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-				JOptionPane.showMessageDialog(this, "Unable to create temp file", "Error", JOptionPane.ERROR_MESSAGE);
-			} catch (ProjectMovieMakerException e) {
-				e.printStackTrace();
-				JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-			} catch (Exception e) {
-				e.printStackTrace();
-				JOptionPane.showMessageDialog(this, "Unable to create movie preview!", "Error",
-						JOptionPane.ERROR_MESSAGE);
-			}
-		}
 	}
 
 	private void onExport() {
@@ -1120,7 +1039,7 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 			try {
 				ExportDialog d = new ExportDialog(this, m_prj);
 
-				d.show();
+				d.setVisible(true);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -1149,53 +1068,6 @@ public class CaptureFrame extends JFrame implements ChangeListener {
 			m_timer.setRepeats(false);
 			m_timer.start();
 		}
-	}
-
-	public DataSource createCaptureDataSource(String devName, int formatIndex) {
-		MediaLocator deviceURL;
-
-		CaptureDeviceInfo cdi;
-
-		DataSource ds = null;
-
-		Format format, formats[];
-
-		FormatControl formatControls[];
-
-		// System.out.println("opening " + devName);
-		cdi = CaptureDeviceManager.getDevice(devName);
-		format = cdi.getFormats()[formatIndex];
-
-		if (cdi != null) {
-			deviceURL = cdi.getLocator();
-			// System.out.println("deviceURL = " + deviceURL);
-			try {
-				ds = javax.media.Manager.createDataSource(deviceURL);
-			} catch (NoDataSourceException ndse) {
-				ndse.printStackTrace();
-				return null;
-			} catch (java.io.IOException ioe) {
-				ioe.printStackTrace();
-				return null;
-			}
-		}
-		if (!(ds instanceof CaptureDevice)) {
-			JOptionPane.showMessageDialog(this, devName + " is not a capture device!", "Error",
-					JOptionPane.ERROR_MESSAGE);
-			ds = null;
-		}
-		if (ds != null && format != null) {
-			formatControls = ((CaptureDevice) ds).getFormatControls();
-			for (int i = 0; i < formatControls.length; i++) {
-				formats = formatControls[i].getSupportedFormats();
-				for (int j = 0; j < formats.length; j++)
-					if (formats[j].matches(format)) {
-						formatControls[i].setFormat(format);
-						break;
-					}
-			}
-		}
-		return new CDSWrapper((PushBufferDataSource) ds);
 	}
 
 	private Image doCapture() {
